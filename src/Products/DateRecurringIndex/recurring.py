@@ -97,7 +97,7 @@ class RecurConfICal(RecurConf):
 def recurringSequenceICal(recurconf):
     """ Same as RecurringSequence from dateutil.rrule rules
     """
-    rset = rruleset()
+    rset = dateutil.rruleset()
     rset.rdate(recurconf.start) # always include the start date itself
 
     if not recurconf.recrule:

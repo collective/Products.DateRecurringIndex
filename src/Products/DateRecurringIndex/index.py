@@ -71,7 +71,7 @@ class DateRecurringIndex(UnIndex):
         UnIndex.__init__(self, id, ignore_ex=None, call_methods=None,
                          extra=None, caller=None)
         self.start = extra.start
-        self.recrule = extra.recrule
+        self.recurdef = extra.recurdef
         self.until = extra.until
         assert(extra.dst in [DSTADJUST, DSTKEEP, DSTAUTO])
         self.dst = extra.dst
@@ -99,13 +99,13 @@ class DateRecurringIndex(UnIndex):
             return status
 
         recurdef = getattr(obj, self.recurdef, None)
-        if safe_callable(recrule):
+        if safe_callable(recurdef):
             recurdef = recurdef()
         until = getattr(obj, self.until, None)
         if safe_callable(until):
             until = until()
 
-        if IRuleSet.providedBy(recurdef):
+        if IRRuleSet.providedBy(recurdef):
             ruleconf = RRuleConfICal(start, recurdef, until, dst=self.dst)
         else:
             if not isinstance(recurdef, int):
@@ -235,8 +235,8 @@ class DateRecurringIndex(UnIndex):
         return self.start
 
     security.declareProtected(VIEW_PERMISSION, 'getRecruleAttribute')
-    def getRecruleAttribute(self):
-        return self.recrule
+    def getRecurDefAttribute(self):
+        return self.recurdef
 
     security.declareProtected(VIEW_PERMISSION, 'getUntilAttribute')
     def getUntilAttribute(self):

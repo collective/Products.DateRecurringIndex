@@ -5,7 +5,7 @@
 <div>
 attribute- or fieldname of date start: <span tal:replace="context/getStartAttribute" />
 <br>
-attribute- or fieldname of recurrence rule as delta in minutes or dateutil.rrule: <span tal:replace="context/getDeltaAttribute" />
+attribute- or fieldname of recurrence rule definition as delta in minutes or dateutil.rrule: <span tal:replace="context/getRecurDefAttribute" />
 <br>
 attribute- or fieldname of date until: <span tal:replace="context/getUntilAttribute" />
 <br>

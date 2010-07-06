@@ -18,9 +18,9 @@
 	</div>
 
 	<div class="form-label">
-	    <label for="recrule">recrule</label>
-	    <input id="recrule" type="text" name="extra.recrule:record" />
-		<em>attribute- or fieldname of recurrence rule as delta in minutes or dateutil.rrule</em> mandatory
+	    <label for="recurdef">recurdef</label>
+	    <input id="recurdef" type="text" name="extra.recurdef:record" />
+		<em>attribute- or fieldname of recurrence rule definition as delta in minutes or dateutil.rrule</em> mandatory
 	</div>
 
 	<div class="form-label">
