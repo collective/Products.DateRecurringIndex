@@ -2,8 +2,7 @@
 # BSD derivative License
 
 import datetime
-from dateutil.rrule import rrule
-from dateutil.rrule import rruleset
+import dateutil
 from utils import pydt
 from utils import dt2int
 from utils import utc
@@ -28,24 +27,41 @@ DSTKEEP   = 'keep'
 DSTAUTO   = 'auto'
 
 
-
 class RRuleSet(object):
     implements(IRRuleSet)
     def __init__(self):
         self.rrules = None
-        self.rdate = None
-        self.exrule = None
-        self.exdate = None
+        self.rdates = None
+        self.exrules = None
+        self.exdates = None
 
 class RRule(object):
+    """ dateutil.rrule data structures.
+    FAQ
+    ===
+    Question: Why not using dateutil.rrule instances?
+    Answer: We don't want to store dateutil.rrule instances on
+            recurrence-definition-fields
+    """
     implements(IRRule)
     def __init__(self):
+        self.freq = None
         self.dtstart = None
         self.interval = None
         self.wkst = None
         self.count = None
         self.until = None
 
+    @attribute
+    def rrule(self):
+        rrule = dateutil.rrule(
+            self.freq,
+            dtstart = self.dtstart,
+            interval = self.interval,
+            wkst = self.wkst,
+            count = self.count,
+            until = self.until)
+        return rrule
 
 class RecurConf(object):
     """RecurrenceRule object"""
@@ -74,89 +90,63 @@ class RecurConfTimeDelta(RecurConf):
 
 class RecurConfICal(RecurConf):
     implements(IRecurConfICal)
-    def __init__(self, start, recrule=None, until=None, dst=DSTAUTO, exclude=False):
-        self.exclude = exclude
-        if not isinstance(recrule, list) and not isinstance(recrule, tuple):
-            recrule = [recrule]
-        # TODO, FIXME: remove eval hack, which is an SECURITY ISSUE
-        # eval is used to parse a list of strings to a list of dicts
-        recrules = []
-        for rr in recrule:
-            if isinstance(rr, str):
-                rr = eval(rr)
-            recrules.append(rr)
-        super(RecurConfICal, self).__init__(start, recrules, until, dst=DSTAUTO)
 
 
 @adapter(IRecurConfICal)
 @implementer(IRecurringSequence)
-def recurringSequenceICal(recruleset):
+def recurringSequenceICal(recurconf):
     """ Same as RecurringSequence from dateutil.rrule rules
     """
     rset = rruleset()
-    # TODO: shorten and clearify following comment
-    rset.rdate(recruleset.start) # always include the base date. this could may
-    # be problematic, if value of the index' start attribute is not meant to be
-    # the base date of an event but the starting date of the recurrence _and_
-    # the first calculated occurence differs from the base date.
-    # this should just rarely be the case.
-    for recrule in recruleset.recrule:
-        if 'dtstart' not in recrule or not recrule['dtstart']:
-            recrule['dtstart'] = recruleset.start
-        recrule['dtstart'] = anydt(recrule['dtstart'])
+    rset.rdate(recurconf.start) # always include the start date itself
 
-        if 'until' not in recrule or not recrule['until']:
-            recrule['until'] = recruleset.until
-        recrule['until'] = anydt(recrule['until'])
+    if not recurconf.recrule:
+        return rset
+    rrules = recurconf.recrule.rrules
+    exrules = recurconf.recrule.exrules
+    rdates = recurconf.recrule.rdates
+    exdates = recurconf.recrule.exdates
 
-        if 'freq' not in recrule:
-            recrule['freq'] = None
-
-        exclude = False
-        if 'exclude' in recrule:
-            exclude = recrule['exclude']
-            del recrule['exclude']
-
-        if recrule['freq'] is None and not exclude:
-            rset.rdate(recrule['dtstart'])
-        elif recrule['freq'] is None and exclude:
-            rset.exdate(recrule['dtstart'])
-        elif exclude:
-            rset.exrule(rrule(**recrule))
-        else:
-            rset.rrule(rrule(**recrule))
-
-    # TODO: äh?
-    if recruleset.start not in list(rset):
-        rset
+    if rrules and isinstance(list, rrules):
+        for rrule in rrules:
+            rset.rrule(rrule.rrule)
+    if exrules and isinstance(list, exrules):
+        for exrule in exrules:
+            rset.exrule(exrule.rrule)
+    if rdates and isinstance(list, rdates):
+        for rdate in rdates:
+            rset.rdate(rdate)
+    if exdates and isinstance(list, exdates):
+        for exdate in exdates:
+            rset.exdate(exdate)
 
     return rset
 
 
 @adapter(IRecurConfTimeDelta)
 @implementer(IRecurringSequence)
-def recurringSequenceTimeDelta(recurdef):
+def recurringSequenceTimeDelta(recurconf):
     """a sequence of integer objects.
 
-    @param recurdef.start: a python datetime (non-naive) or Zope DateTime.
-    @param recurdef.recrule: Timedelta as integer >=0 (unit is minutes) or None.
-    @param recurdef.until: a python datetime (non-naive) or Zope DateTime >=start or None.
-    @param recurdef.dst: is either DSTADJUST, DSTKEEP or DSTAUTO. On DSTADJUST we have a
+    @param recurconf.start: a python datetime (non-naive) or Zope DateTime.
+    @param recurconf.recrule: Timedelta as integer >=0 (unit is minutes) or None.
+    @param recurconf.until: a python datetime (non-naive) or Zope DateTime >=start or None.
+    @param recurconf.dst: is either DSTADJUST, DSTKEEP or DSTAUTO. On DSTADJUST we have a
                 more human behaviour on daylight saving time changes: 8:00 on
                 day before spring dst-change plus 24h results in 8:00 day after
                 dst-change, which means in fact one hour less is added. On a
-                recurdef.recrule < 24h this will fail!
+                recurconf.recrule < 24h this will fail!
                 If DSTKEEP is selected, the time is added in its real hours, so
                 the above example results in 9:00 on day after dst-change.
                 DSTAUTO uses DSTADJUST for >=24h and DSTKEEP for < 24h
-                recurdef.recrule delta minutes.
+                recurconf.recrule delta minutes.
 
     @return: a sequence of dates
     """
-    start = recurdef.start
-    delta = recurdef.recrule
-    until = recurdef.until
-    dst = recurdef.dst
+    start = recurconf.start
+    delta = recurconf.recrule
+    until = recurconf.until
+    dst = recurconf.dst
 
     start = pydt(start)
 

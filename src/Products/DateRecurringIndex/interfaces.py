@@ -25,9 +25,9 @@ class IRecurConfTimeDelta(IRecurConf):
 class IRRuleSet(Interface):
     """ Data Structure for dateutil.rset
     @ attr rrules: List of IRRule
-    @ attr rdate: List of datetime instances to include
-    @ attr exrule: List of IRRule for dates to exclude
-    @ attr exdate: List of datetime instances to exclude
+    @ attr rdates: List of datetime instances to include
+    @ attr exrules: List of IRRule for dates to exclude
+    @ attr exdates: List of datetime instances to exclude
     """
 class IRRule(Interface):
     """ Data Structure for datetutil.rrule
