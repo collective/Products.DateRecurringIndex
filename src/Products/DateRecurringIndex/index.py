@@ -234,7 +234,7 @@ class DateRecurringIndex(UnIndex):
     def getStartAttribute(self):
         return self.start
 
-    security.declareProtected(VIEW_PERMISSION, 'getRecruleAttribute')
+    security.declareProtected(VIEW_PERMISSION, 'getRecurDefAttribute')
     def getRecurDefAttribute(self):
         return self.recurdef
 
