@@ -70,6 +70,7 @@ def recurringSequenceICal(recruleset):
     """ Same as RecurringSequence from dateutil.rrule rules
     """
     rset = rruleset()
+    # TODO: shorten and clearify following comment
     rset.rdate(recruleset.start) # always include the base date. this could may
     # be problematic, if value of the index' start attribute is not meant to be
     # the base date of an event but the starting date of the recurrence _and_
@@ -101,6 +102,7 @@ def recurringSequenceICal(recruleset):
         else:
             rset.rrule(rrule(**recrule))
 
+    # TODO: äh?
     if recruleset.start not in list(rset):
         rset
 
