@@ -15,15 +15,15 @@ from zope.component import adapter
 
 from Products.DateRecurringIndex.interfaces import IRecurringSequence
 from Products.DateRecurringIndex.interfaces import IRecurringIntSequence
-from Products.DateRecurringIndex.interfaces import IRRule
-from Products.DateRecurringIndex.interfaces import IRRuleICal
-from Products.DateRecurringIndex.interfaces import IRRuleTimeDelta
+from Products.DateRecurringIndex.interfaces import IRecurConf
+from Products.DateRecurringIndex.interfaces import IRecurConfICal
+from Products.DateRecurringIndex.interfaces import IRecurConfTimeDelta
 
 DSTADJUST = 'adjust'
 DSTKEEP   = 'keep'
 DSTAUTO   = 'auto'
 
-class RRule(object):
+class RecurConf(object):
     """RecurrenceRule object"""
     def __init__(self, start, recrule=None, until=None, dst=DSTAUTO):
         self._start = None
@@ -45,11 +45,11 @@ class RRule(object):
         self._until = anydt(until)
     until = property(get_until, set_until)
 
-class RRuleTimeDelta(RRule):
-    implements(IRRuleTimeDelta)
+class RecurConfTimeDelta(RecurConf):
+    implements(IRecurConfTimeDelta)
 
-class RRuleICal(RRule):
-    implements(IRRuleICal)
+class RecurConfICal(RecurConf):
+    implements(IRecurConfICal)
     def __init__(self, start, recrule=None, until=None, dst=DSTAUTO, exclude=False):
         self.exclude = exclude
         if not isinstance(recrule, list) and not isinstance(recrule, tuple):
@@ -61,10 +61,10 @@ class RRuleICal(RRule):
             if isinstance(rr, str):
                 rr = eval(rr)
             recrules.append(rr)
-        super(RRuleICal, self).__init__(start, recrules, until, dst=DSTAUTO)
+        super(RecurConfICal, self).__init__(start, recrules, until, dst=DSTAUTO)
 
 
-@adapter(IRRuleICal)
+@adapter(IRecurConfICal)
 @implementer(IRecurringSequence)
 def recurringSequenceICal(recruleset):
     """ Same as RecurringSequence from dateutil.rrule rules
@@ -109,7 +109,7 @@ def recurringSequenceICal(recruleset):
     return rset
 
 
-@adapter(IRRuleTimeDelta)
+@adapter(IRecurConfTimeDelta)
 @implementer(IRecurringSequence)
 def recurringSequenceTimeDelta(recurdef):
     """a sequence of integer objects.
@@ -162,7 +162,7 @@ def recurringSequenceTimeDelta(recurdef):
         before = after
 
 
-@adapter(IRRule)
+@adapter(IRecurConf)
 @implementer(IRecurringIntSequence)
 def recurringIntSequence(recrule):
     """ Same as recurringSequence, but returns integer represetations of dates.

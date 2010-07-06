@@ -105,15 +105,14 @@ class DateRecurringIndex(UnIndex):
         if safe_callable(until):
             until = until()
 
-        if not IRRule.providedBy(recurdef):
-            if isinstance(recurdef, int) or recurdef is None:
-                recruleset = RRuleTimeDelta(start, recurdef, until, dst=self.dst)
-            else:
-                recruleset = RRuleICal(start, recurdef, until, dst=self.dst)
+        if IRuleSet.providedBy(recurdef):
+            ruleconf = RRuleConfICal(start, recurdef, until, dst=self.dst)
         else:
-            recruleset = self.recurdef
+            if not isinstance(recurdef, int):
+                recurdef = None
+            ruleconf = RRuleConfTimeDelta(start, recurdef, until, dst=self.dst)
 
-        newvalues = IISet(IRecurringIntSequence(recruleset))
+        newvalues = IISet(IRecurringIntSequence(ruleconf))
         oldvalues = self._unindex.get(documentId, _marker)
 
         if oldvalues is not _marker and not difference(newvalues, oldvalues):
