@@ -52,7 +52,7 @@ class RRule(object):
         self.count = None
         self.until = None
 
-    @attribute
+    @property
     def rrule(self):
         rrule = dateutil.rrule(
             self.freq,

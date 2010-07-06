@@ -21,10 +21,10 @@ from Products.PluginIndexes.DateIndex.DateIndex import DateIndex
 from Products.DateRecurringIndex.recurring import dt2int
 from Products.DateRecurringIndex.recurring import pydt
 from Products.DateRecurringIndex.recurring import DSTADJUST, DSTKEEP, DSTAUTO
-from Products.DateRecurringIndex.recurring import RRuleTimeDelta
-from Products.DateRecurringIndex.recurring import RRuleICal
+from Products.DateRecurringIndex.recurring import RecurConfTimeDelta
+from Products.DateRecurringIndex.recurring import RecurConfICal
 from Products.DateRecurringIndex.interfaces import IRecurringIntSequence
-from Products.DateRecurringIndex.interfaces import IRRule
+from Products.DateRecurringIndex.interfaces import IRRuleSet
 
 logger = logging.getLogger('Products.DateRecurringIndex.index')
 
@@ -106,11 +106,11 @@ class DateRecurringIndex(UnIndex):
             until = until()
 
         if IRRuleSet.providedBy(recurdef):
-            ruleconf = RRuleConfICal(start, recurdef, until, dst=self.dst)
+            ruleconf = RecurConfICal(start, recurdef, until, dst=self.dst)
         else:
             if not isinstance(recurdef, int):
                 recurdef = None
-            ruleconf = RRuleConfTimeDelta(start, recurdef, until, dst=self.dst)
+            ruleconf = RecurConfTimeDelta(start, recurdef, until, dst=self.dst)
 
         newvalues = IISet(IRecurringIntSequence(ruleconf))
         oldvalues = self._unindex.get(documentId, _marker)

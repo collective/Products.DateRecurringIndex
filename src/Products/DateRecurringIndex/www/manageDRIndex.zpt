@@ -2,7 +2,7 @@
 <h1 tal:replace="structure context/manage_tabs">TABS</h1>
 
 <p class="form-help">
-<div>
+<p>
 attribute- or fieldname of date start: <span tal:replace="context/getStartAttribute" />
 <br>
 attribute- or fieldname of recurrence rule definition as delta in minutes or dateutil.rrule: <span tal:replace="context/getRecurDefAttribute" />
