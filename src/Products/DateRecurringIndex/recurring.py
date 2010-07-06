@@ -15,13 +15,37 @@ from zope.component import adapter
 
 from Products.DateRecurringIndex.interfaces import IRecurringSequence
 from Products.DateRecurringIndex.interfaces import IRecurringIntSequence
-from Products.DateRecurringIndex.interfaces import IRecurConf
-from Products.DateRecurringIndex.interfaces import IRecurConfICal
-from Products.DateRecurringIndex.interfaces import IRecurConfTimeDelta
+from Products.DateRecurringIndex.interfaces import (
+    IRecurConf,
+    IRecurConfICal,
+    IRecurConfTimeDelta,
+    IRRuleSet,
+    IRRule
+)
 
 DSTADJUST = 'adjust'
 DSTKEEP   = 'keep'
 DSTAUTO   = 'auto'
+
+
+
+class RRuleSet(object):
+    implements(IRRuleSet)
+    def __init__(self):
+        self.rrules = None
+        self.rdate = None
+        self.exrule = None
+        self.exdate = None
+
+class RRule(object):
+    implements(IRRule)
+    def __init__(self):
+        self.dtstart = None
+        self.interval = None
+        self.wkst = None
+        self.count = None
+        self.until = None
+
 
 class RecurConf(object):
     """RecurrenceRule object"""

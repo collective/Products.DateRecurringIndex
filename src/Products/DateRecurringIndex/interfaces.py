@@ -22,7 +22,7 @@ class IRecurConfTimeDelta(IRecurConf):
     """
 
 
-class IRuleSet(Interface):
+class IRRuleSet(Interface):
     """ Data Structure for dateutil.rset
     @ attr rrules: List of IRRule
     @ attr rdate: List of datetime instances to include
