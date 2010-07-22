@@ -40,8 +40,8 @@ class RRule(object):
     FAQ
     ===
     Question: Why not using dateutil.rrule instances?
-    Answer: We don't want to store dateutil.rrule instances on
-            recurrence-definition-fields
+    Answer: We don't want to store them directly on fields. Implementation can
+            be changed too.
     """
     implements(IRRule)
     def __init__(self):
@@ -69,8 +69,8 @@ class RecurConf(object):
         self._start = None
         self._until = None
         self.start = start
-        self.recrule = recrule
         self.until = until
+        self.recrule = recrule
         self.dst = dst
 
     def get_start(self):
