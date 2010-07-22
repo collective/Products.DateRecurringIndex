@@ -54,7 +54,7 @@ class RRule(object):
 
     @property
     def rrule(self):
-        rrule = dateutil.rrule(
+        rrule = dateutil.rrule.rrule(
             self.freq,
             dtstart = self.dtstart,
             interval = self.interval,
@@ -97,15 +97,19 @@ class RecurConfICal(RecurConf):
 def recurringSequenceICal(recurconf):
     """ Same as RecurringSequence from dateutil.rrule rules
     """
-    rset = dateutil.rruleset()
+    rset = dateutil.rrule.rruleset()
     rset.rdate(recurconf.start) # always include the start date itself
 
     if not recurconf.recrule:
         return rset
-    rrules = recurconf.recrule.rrules
-    exrules = recurconf.recrule.exrules
-    rdates = recurconf.recrule.rdates
-    exdates = recurconf.recrule.exdates
+    if IRRuleSet.providedBy(recurconf.recrule):
+        rrules = recurconf.recrule.rrules
+        exrules = recurconf.recrule.exrules
+        rdates = recurconf.recrule.rdates
+        exdates = recurconf.recrule.exdates
+    elif IRRule.providedBy(recurconf.recrule):
+        rrules = [recurconf.recrule]
+        exrules = rdates = exdates = None
 
     if rrules and isinstance(list, rrules):
         for rrule in rrules:
