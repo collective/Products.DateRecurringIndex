@@ -29,11 +29,11 @@ DSTAUTO   = 'auto'
 
 class RRuleSet(object):
     implements(IRRuleSet)
-    def __init__(self):
-        self.rrules = None
-        self.rdates = None
-        self.exrules = None
-        self.exdates = None
+    def __init__(self, rrules=[], rdates=[], exrules=[], exdates=[]):
+        self.rrules = rrules
+        self.rdates = rdates
+        self.exrules = exrules
+        self.exdates = exdates
 
 class RRule(object):
     """ dateutil.rrule data structures.
@@ -44,13 +44,14 @@ class RRule(object):
             be changed too.
     """
     implements(IRRule)
-    def __init__(self):
-        self.freq = None
-        self.dtstart = None
-        self.interval = None
-        self.wkst = None
-        self.count = None
-        self.until = None
+    def __init__(self, freq=None, dtstart=None, interval=None, wkst=None,
+                 count=None, until=None):
+        self.freq = freq
+        self.dtstart = dtstart
+        self.interval = interval
+        self.wkst = wkst
+        self.count = count
+        self.until = until
 
     @property
     def rrule(self):
@@ -102,6 +103,7 @@ def recurringSequenceICal(recurconf):
 
     if not recurconf.recrule:
         return rset
+    rrules = exrules = rdates = exdates = None
     if IRRuleSet.providedBy(recurconf.recrule):
         rrules = recurconf.recrule.rrules
         exrules = recurconf.recrule.exrules
@@ -109,7 +111,6 @@ def recurringSequenceICal(recurconf):
         exdates = recurconf.recrule.exdates
     elif IRRule.providedBy(recurconf.recrule):
         rrules = [recurconf.recrule]
-        exrules = rdates = exdates = None
 
     if rrules and isinstance(list, rrules):
         for rrule in rrules:
