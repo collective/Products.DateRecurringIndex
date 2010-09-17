@@ -17,9 +17,7 @@ from Products.DateRecurringIndex.interfaces import IRecurringIntSequence
 from Products.DateRecurringIndex.interfaces import (
     IRecurConf,
     IRecurConfICal,
-    IRecurConfTimeDelta,
-    IRRuleSet,
-    IRRule
+    IRecurConfTimeDelta
 )
 
 DSTADJUST = 'adjust'
@@ -27,42 +25,42 @@ DSTKEEP   = 'keep'
 DSTAUTO   = 'auto'
 
 
-class RRuleSet(object):
-    implements(IRRuleSet)
-    def __init__(self, rrules=[], rdates=[], exrules=[], exdates=[]):
-        self.rrules = rrules
-        self.rdates = rdates
-        self.exrules = exrules
-        self.exdates = exdates
+#class RRuleSet(object):
+#    implements(IRRuleSet)
+#    def __init__(self, rrules=[], rdates=[], exrules=[], exdates=[]):
+#        self.rrules = rrules
+#        self.rdates = rdates
+#        self.exrules = exrules
+#        self.exdates = exdates
 
-class RRule(object):
-    """ dateutil.rrule data structures.
-    FAQ
-    ===
-    Question: Why not using dateutil.rrule instances?
-    Answer: We don't want to store them directly on fields. Implementation can
-            be changed too.
-    """
-    implements(IRRule)
-    def __init__(self, freq=None, dtstart=None, interval=None, wkst=None,
-                 count=None, until=None):
-        self.freq = freq
-        self.dtstart = dtstart
-        self.interval = interval
-        self.wkst = wkst
-        self.count = count
-        self.until = until
-
-    @property
-    def rrule(self):
-        rrule = dateutil.rrule.rrule(
-            self.freq,
-            dtstart = self.dtstart,
-            interval = self.interval,
-            wkst = self.wkst,
-            count = self.count,
-            until = self.until)
-        return rrule
+#class RRule(object):
+#    """ dateutil.rrule data structures.
+#    FAQ
+#    ===
+#    Question: Why not using dateutil.rrule instances?
+#    Answer: We don't want to store them directly on fields. Implementation can
+#            be changed too.
+#    """
+#    implements(IRRule)
+#    def __init__(self, freq=None, dtstart=None, interval=None, wkst=None,
+#                 count=None, until=None):
+#        self.freq = freq
+#        self.dtstart = dtstart
+#        self.interval = interval
+#        self.wkst = wkst
+#        self.count = count
+#        self.until = until
+#
+#    @property
+#    def rrule(self):
+#        rrule = dateutil.rrule.rrule(
+#            self.freq,
+#            dtstart = self.dtstart,
+#            interval = self.interval,
+#            wkst = self.wkst,
+#            count = self.count,
+#            until = self.until)
+#        return rrule
 
 class RecurConf(object):
     """RecurrenceRule object"""
@@ -96,37 +94,18 @@ class RecurConfICal(RecurConf):
 @adapter(IRecurConfICal)
 @implementer(IRecurringSequence)
 def recurringSequenceICal(recurconf):
-    """ Same as RecurringSequence from dateutil.rrule rules
+    """ Sequence of datetime objects from dateutil's recurrence rules
     """
-    rset = dateutil.rrule.rruleset()
+    if isinstance(recurconf.recrule, dateutil.rrule.rruleset):
+        # recurconf.recrule may have rrules, exrules, rdates, exdates
+        rset = recurconf.recrule
+    else:
+        rset = dateutil.rrule.rruleset()
+    if isinstance(recurconf.recrule, dateutil.rrule):
+        rset.rrule(recurconf.recrule)
     rset.rdate(recurconf.start) # always include the start date itself
-
-    if not recurconf.recrule:
-        return rset
-    rrules = exrules = rdates = exdates = None
-    if IRRuleSet.providedBy(recurconf.recrule):
-        rrules = recurconf.recrule.rrules
-        exrules = recurconf.recrule.exrules
-        rdates = recurconf.recrule.rdates
-        exdates = recurconf.recrule.exdates
-    elif IRRule.providedBy(recurconf.recrule):
-        rrules = [recurconf.recrule]
-
-    if rrules and isinstance(list, rrules):
-        for rrule in rrules:
-            rset.rrule(rrule.rrule)
-    if exrules and isinstance(list, exrules):
-        for exrule in exrules:
-            rset.exrule(exrule.rrule)
-    if rdates and isinstance(list, rdates):
-        for rdate in rdates:
-            rset.rdate(rdate)
-    if exdates and isinstance(list, exdates):
-        for exdate in exdates:
-            rset.exdate(exdate)
-
-    return rset
-
+    # rest should have been set by application who
+    return list(rset)
 
 @adapter(IRecurConfTimeDelta)
 @implementer(IRecurringSequence)
@@ -184,7 +163,7 @@ def recurringSequenceTimeDelta(recurconf):
 @adapter(IRecurConf)
 @implementer(IRecurringIntSequence)
 def recurringIntSequence(recrule):
-    """ Same as recurringSequence, but returns integer represetations of dates.
+    """ IRecurringSequence as integer represetations of dates.
     """
     recseq = IRecurringSequence(recrule)
     for dt in recseq:

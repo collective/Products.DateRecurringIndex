@@ -70,9 +70,9 @@ class DateRecurringIndex(UnIndex):
         """
         UnIndex.__init__(self, id, ignore_ex=None, call_methods=None,
                          extra=None, caller=None)
-        self.start = extra.start
-        self.recurdef = extra.recurdef
-        self.until = extra.until
+        self.attr_start = extra.start
+        self.attr_recurdef = extra.recurdef
+        self.attr_until = extra.until
         assert(extra.dst in [DSTADJUST, DSTKEEP, DSTAUTO])
         self.dst = extra.dst
 
@@ -91,28 +91,32 @@ class DateRecurringIndex(UnIndex):
         # taken partly from DateIndex
         status = 0
 
+        # TODO: why this try clause?
         try:
-            start = getattr(obj, self.start)
+            start = getattr(obj, self.attr_start)
             if safe_callable(start):
                 start = start()
         except AttributeError:
             return status
 
-        recurdef = getattr(obj, self.recurdef, None)
-        if safe_callable(recurdef):
-            recurdef = recurdef()
-        until = getattr(obj, self.until, None)
+        until = getattr(obj, self.attr_until, None)
         if safe_callable(until):
             until = until()
 
-        if IRRuleSet.providedBy(recurdef):
-            ruleconf = RecurConfICal(start, recurdef, until, dst=self.dst)
+        recurdef = getattr(obj, self.attr_recurdef, None)
+        if safe_callable(recurdef):
+            recurdef = recurdef()
+
+        from dateutil import rrule
+        if isinstance(recurdef, rrule) or isinstance(recurdef, rrule.rruleset):
+            recurconf = RecurConfICal(start, recurdef, until, dst=self.dst)
         else:
+            # TODO: don't i get an string and have explicitly cast it into int?
             if not isinstance(recurdef, int):
                 recurdef = None
-            ruleconf = RecurConfTimeDelta(start, recurdef, until, dst=self.dst)
+            recurconf = RecurConfTimeDelta(start, recurdef, until, dst=self.dst)
 
-        newvalues = IISet(IRecurringIntSequence(ruleconf))
+        newvalues = IISet(IRecurringIntSequence(recurconf))
         oldvalues = self._unindex.get(documentId, _marker)
 
         if oldvalues is not _marker and not difference(newvalues, oldvalues):
