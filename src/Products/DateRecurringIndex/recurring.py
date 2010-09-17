@@ -101,9 +101,11 @@ def recurringSequenceICal(recurconf):
         rset = recurconf.recrule
     else:
         rset = dateutil.rrule.rruleset()
-    if isinstance(recurconf.recrule, dateutil.rrule):
+    if isinstance(recurconf.recrule, dateutil.rrule.rrule):
         rset.rrule(recurconf.recrule)
     rset.rdate(recurconf.start) # always include the start date itself
+    # TODO: check dtstart and until/count for all rrule and exrules
+    #       calculating without until/count takes loooong
     # rest should have been set by application who
     return list(rset)
 
