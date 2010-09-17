@@ -14,10 +14,10 @@ optionflags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 
 class DummyEvent(object):
     """some dummy with a start, delta and until to index"""
-    def __init__(self, id, start, delta, until):
+    def __init__(self, id, start, recurdef, until):
         self.id = id
         self.start = start
-        self.delta = delta
+        self.recurdef = recurdef
         self.until = until
 
 class DRITestcase(ztc.ZopeTestCase):
