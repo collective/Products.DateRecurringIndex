@@ -24,7 +24,6 @@ from Products.DateRecurringIndex.recurring import DSTADJUST, DSTKEEP, DSTAUTO
 from Products.DateRecurringIndex.recurring import RecurConfTimeDelta
 from Products.DateRecurringIndex.recurring import RecurConfICal
 from Products.DateRecurringIndex.interfaces import IRecurringIntSequence
-from Products.DateRecurringIndex.interfaces import IRRuleSet
 
 logger = logging.getLogger('Products.DateRecurringIndex.index')
 
