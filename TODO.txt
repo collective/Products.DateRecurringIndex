@@ -40,3 +40,42 @@ ruleb.rrules = [RRule()]
 ruleb.rrules[0].freq = 1
 ruleb.rrules[0].dstart = '2010-01-01 0:00'
 ruleb.rrules[0].count = 3
+
+
+>>> from dateutil import rrule
+>>> rrule.rrule
+<class dateutil.rrule.rrule at 0x9b75b9c>
+>>> from datetime import datetime
+>>> list(rrule.rrule(rrule.WEEKLY, dtstart=datetime.now(), until=datetime(2010, 10, 17)))
+[datetime.datetime(2010, 9, 17, 20, 7, 52), datetime.datetime(2010, 9, 24, 20, 7, 52), datetime.datetime(2010, 10, 1, 20, 7, 52), datetime.datetime(2010, 10, 8, 20, 7, 52), datetime.datetime(2010, 10, 15, 20, 7, 52)]
+
+>>> rrule.rruleset
+<class dateutil.rrule.rruleset at 0x9b75bfc>
+>>> set = rrule.rruleset
+>>> set.rdate(datetime(1900,01,01))
+>>> set.rrule(rrule.rrule(rrule.WEEKLY, dtstart=datetime.now(), until=datetime(2010, 10, 17)))
+>>> set
+<dateutil.rrule.rruleset instance at 0x9bc088c>
+>>> list(set)
+[datetime.datetime(1900, 1, 1, 0, 0), datetime.datetime(2010, 9, 17, 20, 11, 35), datetime.datetime(2010, 9, 24, 20, 11, 35), datetime.datetime(2010, 10, 1, 20, 11, 35), datetime.datetime(2010, 10, 8, 20, 11, 35), datetime.datetime(2010, 10, 15, 20, 11, 35)]
+>>> set.rdate(datetime(1900,1,1))
+>>> set.rdate(datetime(1900,1,1))
+>>> set.rdate(datetime(1900,1,1))
+>>> set.rdate(datetime(1900,1,1))
+>>> set.rdate(datetime(1900,1,1))
+>>> set.rdate(datetime(1900,1,1))
+>>> set.rdate(datetime(1900,1,1))
+>>> set.rdate(datetime(1900,1,1))
+>>> set.rdate(datetime(1900,1,1))
+>>> set.rdate(datetime(1900,1,1))
+>>> set.rdate(datetime(1900,1,1))
+>>> set.rdate(datetime(1900,1,1))
+>>> set.rdate(datetime(1900,1,1))
+>>> list(set)
+[datetime.datetime(1900, 1, 1, 0, 0), datetime.datetime(2010, 9, 17, 20, 11, 35), datetime.datetime(2010, 9, 24, 20, 11, 35), datetime.datetime(2010, 10, 1, 20, 11, 35), datetime.datetime(2010, 10, 8, 20, 11, 35), datetime.datetime(2010, 10, 15, 20, 11, 35)]
+
+>>> from pympler import asizeof
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+ImportError: No module named pympler
+
