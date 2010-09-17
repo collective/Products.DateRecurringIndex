@@ -8,30 +8,31 @@ recurring sequence producer
 The recurringSequence calculates a sequence from a datetime, an interval in
 minutes until a end datetime.
 
-    >>> from Products.DateRecurringIndex.interfaces import IRecurringSequence
-    >>> from Products.DateRecurringIndex.recurring import RRuleTimeDelta
-    >>> from Products.DateRecurringIndex.recurring import DSTADJUST
-    >>> from Products.DateRecurringIndex.recurring import DSTKEEP
-    >>> from Products.DateRecurringIndex.recurring import DSTAUTO
-    >>> from datetime import timedelta
     >>> from datetime import datetime
-    >>> from pprint import pprint
+    >>> from datetime import timedelta
     >>> import pytz
+    >>> from dateutil import rrule
 
-    >>> from Products.DateRecurringIndex.recurring import RRuleICal
     >>> from Products.DateRecurringIndex.interfaces import IRecurringSequence
-    >>> from dateutil.rrule import YEARLY, MONTHLY, WEEKLY, DAILY, HOURLY, MINUTELY, SECONDLY
+    >>> from Products.DateRecurringIndex.recurring import RecurConfICal
+    >>> from Products.DateRecurringIndex.recurring import RecurConfTimeDelta
+    >>> from Products.DateRecurringIndex.recurring import DSTADJUST, DSTKEEP, DSTAUTO
+
+    >>> from pprint import pprint
 
 
-RRuleICal Tests
-===============
+RecurConfICal Tests
+===================
 
 The recurrence must include the base date even if the recurrence rule start date
 (dtstart) is higher than the base date.
-    >>> basedate = datetime(2010,01,01,0,0,0,0,pytz.timezone('CET'))
+
+    >>> start = datetime(2010,01,01,0,0,0,0,pytz.timezone('CET'))
     >>> until = datetime(2010,01,05,0,0,0,0,pytz.timezone('CET'))
-    >>> recurrence_start = datetime(2010,01,02,0,0,0,0,pytz.timezone('CET'))
-    >>> recrule = RRuleICal(basedate, {'freq': DAILY, 'dtstart':recurrence_start}, until)
+
+    >>> interact( locals() )
+
+    >>> recrule = RecurConfICal(start, rrule.rrule(rrule.DAILY, dtstart=start, until=until), until)
     >>> list(IRecurringSequence(recrule))
     [datetime.datetime(2010, 1, 1, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
         datetime.datetime(2010, 1, 2, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
@@ -39,42 +40,30 @@ The recurrence must include the base date even if the recurrence rule start date
         datetime.datetime(2010, 1, 4, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
         datetime.datetime(2010, 1, 5, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>)]
 
-#    >>> interact( locals() )
-
 
     >>> start = datetime(2010,01,01,0,0,0,0,pytz.timezone('CET'))
     >>> until = datetime(2016,01,02,0,0,0,0,pytz.timezone('CET'))
-    >>> recrule = RRuleICal(start, {'freq': YEARLY, 'interval':2, 'count':2}, until)
+    >>> recrule = RecurConfICal(start, rrule.rrule(rrule.YEARLY, dtstart=start, interval=2, count=2, until=until), until)
     >>> list(IRecurringSequence(recrule))
     [datetime.datetime(2010, 1, 1, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
         datetime.datetime(2012, 1, 1, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>)]
 
+
     >>> start = datetime(2010,01,01,0,0,0,0,pytz.timezone('CET'))
-    >>> until = datetime(2010,01,01,23,59,59,999,pytz.timezone('CET'))
-
-FAILS cause it seems that 2010-01-01 01:00:00 GMT+1 is removing 2010-01-01 03:00:00 CET+1
-seems that GMT+1 is interpreted by datetime as GMT+0
-TODO: Timezone magic, please check
-    >>> recrule = RRuleICal(start, [\
-    ... {'freq': HOURLY, 'interval':1},\
-    ... {'freq': None, 'dtstart':'2010-05-05 05:05:05 GMT+1'},\
-    ... {'freq': None, 'dtstart':'2010-01-01 01:00:00 GMT+1', 'exclude':True},\
-    ... {'freq': HOURLY, 'dtstart':'2010-01-01 00:00:00 GMT+1', 'interval':2, 'exclude':True},\
-    ... ], until)
-
+    >>> until = datetime(2010,01,10,0,0,0,0,pytz.timezone('CET'))
+    >>> ruleset = rrule.rruleset()
+    >>> ruleset.rrule(rrule.rrule(rrule.DAILY, dtstart=start, until=until))
+    >>> ruleset.rdate(datetime(2010,10,10,0,0,0,0,pytz.timezone('CET')))
+    >>> ruleset.exrule(rrule.rrule(rrule.DAILY, dtstart=start, interval=2, until=until))
+    >>> ruleset.exdate(datetime(2010,01,02,0,0,0,0,pytz.timezone('CET')))
+    >>> recrule = RecurConfICal(start, ruleset, until)
     >>> list(IRecurringSequence(recrule))
-    [datetime.datetime(2010, 1, 1, 3, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2010, 1, 1, 5, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2010, 1, 1, 7, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2010, 1, 1, 9, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2010, 1, 1, 11, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2010, 1, 1, 13, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2010, 1, 1, 15, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2010, 1, 1, 17, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2010, 1, 1, 19, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2010, 1, 1, 21, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2010, 1, 1, 23, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2010, 5, 5, 4, 5, 5, tzinfo=<UTC>)]
+    [datetime.datetime(2010, 1, 4, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
+        datetime.datetime(2010, 1, 6, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
+        datetime.datetime(2010, 1, 8, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
+        datetime.datetime(2010, 1, 10, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
+        datetime.datetime(2010, 10, 10, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>)]
+
 
 
 general
@@ -83,13 +72,13 @@ general
 The simplest case is to just have a one-time event.
 
     >>> start = datetime(2008,01,01,0,0,0,0,pytz.timezone('CET'))
-    >>> recrule = RRuleTimeDelta(start, 0, None)
+    >>> recrule = RecurConfTimeDelta(start, 0, None)
     >>> list(IRecurringSequence(recrule))
     [datetime.datetime(2008, 1, 1, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>)]
 
 We want all hours of a day:
     >>> until = start + timedelta(days=1) - timedelta(microseconds=1)
-    >>> recrule = RRuleTimeDelta(start, 60, until)
+    >>> recrule = RecurConfTimeDelta(start, 60, until)
     >>> pprint(list(IRecurringSequence(recrule)))
     [datetime.datetime(2008, 1, 1, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
         datetime.datetime(2008, 1, 1, 1, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
@@ -127,7 +116,7 @@ First lets change from winter to summertime (EU rules with CET):
     >>> until
     datetime.datetime(2008, 3, 30, 20, 59, 59, 999999, tzinfo=<DstTzInfo 'CET' CEST+2:00:00 DST>)
 
-    >>> recrule = RRuleTimeDelta(start, 60, until, dst=DSTADJUST)
+    >>> recrule = RecurConfTimeDelta(start, 60, until, dst=DSTADJUST)
     >>> seq = IRecurringSequence(recrule)
     >>> seq = list(seq)
     >>> len(seq)
@@ -168,7 +157,7 @@ recurr every day 11:00am.
     >>> start = datetime(2008,03,29,11,0,0,0,pytz.timezone('CET'))
     >>> until = datetime(2008,03,31,11,0,0,0,pytz.timezone('CET'))
     >>> until = until.replace(tzinfo=until.tzinfo.normalize(until).tzinfo)
-    >>> recrule = RRuleTimeDelta(start, 24*60, until, dst=DSTADJUST)
+    >>> recrule = RecurConfTimeDelta(start, 24*60, until, dst=DSTADJUST)
     >>> seq = IRecurringSequence(recrule)
     >>> seq = list(seq)
     >>> pprint(seq)
@@ -178,7 +167,7 @@ recurr every day 11:00am.
 
 see what DSTKEEP do:
 
-    >>> recrule = RRuleTimeDelta(start, 24*60, until, dst=DSTKEEP)
+    >>> recrule = RecurConfTimeDelta(start, 24*60, until, dst=DSTKEEP)
     >>> seq = IRecurringSequence(recrule)
     >>> seq = list(seq)
     >>> pprint(seq)
@@ -191,7 +180,7 @@ Here the correct behaviour on day level with DSTKEEP.
     >>> until = datetime(2008,03,30,21,0,0,0,pytz.timezone('CET')) - timedelta(microseconds=1)
     >>> until = until.replace(tzinfo=until.tzinfo.normalize(until).tzinfo)
 
-    >>> recrule = RRuleTimeDelta(start, 60, until, dst=DSTKEEP)
+    >>> recrule = RecurConfTimeDelta(start, 60, until, dst=DSTKEEP)
     >>> seq = IRecurringSequence(recrule)
     >>> seq = list(seq)
     >>> len(seq)
@@ -229,7 +218,7 @@ Here the correct behaviour on day level it chooses DSTADJUST.
     >>> start = datetime(2008,03,29,11,0,0,0,pytz.timezone('CET'))
     >>> until = datetime(2008,03,31,11,0,0,0,pytz.timezone('CET'))
     >>> until = until.replace(tzinfo=until.tzinfo.normalize(until).tzinfo)
-    >>> recrule = RRuleTimeDelta(start, 24*60, until)
+    >>> recrule = RecurConfTimeDelta(start, 24*60, until)
     >>> seq = IRecurringSequence(recrule)
     >>> seq = list(seq)
     >>> pprint(seq)
@@ -242,7 +231,7 @@ The correct behaviour on below day level: it chooses DSTKEEP.
     >>> start = datetime(2008,03,29,21,0,0,0,pytz.timezone('CET'))
     >>> until = datetime(2008,03,30,21,0,0,0,pytz.timezone('CET')) - timedelta(microseconds=1)
     >>> until = until.replace(tzinfo=until.tzinfo.normalize(until).tzinfo)
-    >>> recrule = RRuleTimeDelta(start, 60, until)
+    >>> recrule = RecurConfTimeDelta(start, 60, until)
     >>> seq = IRecurringSequence(recrule)
     >>> seq = list(seq)
     >>> len(seq)
@@ -254,7 +243,7 @@ recurringIntSequence
 taking the above results in integers if recurringIntSequence is called:
 
     >>> from Products.DateRecurringIndex.recurring import IRecurringIntSequence
-    >>> recrule = RRuleTimeDelta(start, 60, until)
+    >>> recrule = RecurConfTimeDelta(start, 60, until)
     >>> seq = IRecurringIntSequence(recrule)
     >>> seq = list(seq)
     >>> pprint(seq)
@@ -295,8 +284,8 @@ First with UTC
     >>> DT = DateTime('2008-08-26 23:59:00 GMT+0')
     >>> dt = datetime(2008, 8, 26, 23, 59, 0, 0, pytz.timezone('utc'))
 
-    >>> seqDT = list(IRecurringIntSequence(RRuleTimeDelta(DT, 0, None)))
-    >>> seqdt = list(IRecurringIntSequence(RRuleTimeDelta(dt, 0, None)))
+    >>> seqDT = list(IRecurringIntSequence(RecurConfTimeDelta(DT, 0, None)))
+    >>> seqdt = list(IRecurringIntSequence(RecurConfTimeDelta(dt, 0, None)))
     >>> seqDT[0] == seqdt[0]
     True
 
@@ -304,13 +293,13 @@ Now with GMT+2 (CET with DST)
 
     >>> DT = DateTime('2008-08-26 23:59:00 GMT+2')
     >>> dt = datetime(2008, 8, 26, 23, 59, 0, 0, pytz.timezone('CET'))
-    >>> seqDT = list(IRecurringSequence(RRuleTimeDelta(DT, 0, None)))
+    >>> seqDT = list(IRecurringSequence(RecurConfTimeDelta(DT, 0, None)))
 
 seqDT shows now a hour of 21 because it's converted to UTC
     >>> seqDT
     [datetime.datetime(2008, 8, 26, 21, 59, tzinfo=<UTC>)]
 
-    >>> seqdt = list(IRecurringSequence(RRuleTimeDelta(dt, 0, None)))
+    >>> seqdt = list(IRecurringSequence(RecurConfTimeDelta(dt, 0, None)))
     >>> seqdt
     [datetime.datetime(2008, 8, 26, 23, 59, tzinfo=<DstTzInfo 'CET' CEST+2:00:00 DST>)]
 
@@ -319,8 +308,8 @@ this fails! mainly zope DateTimes fault
     True
 
 Does integer represenation work?
-    >>> seqDT = list(IRecurringIntSequence(RRuleTimeDelta(DT, 0, None)))
-    >>> seqdt = list(IRecurringIntSequence(RRuleTimeDelta(dt, 0, None)))
+    >>> seqDT = list(IRecurringIntSequence(RecurConfTimeDelta(DT, 0, None)))
+    >>> seqdt = list(IRecurringIntSequence(RecurConfTimeDelta(dt, 0, None)))
 
 this fails too! see above
     >>> seqDT[0] == seqdt[0]
