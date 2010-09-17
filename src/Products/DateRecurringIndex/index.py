@@ -107,7 +107,7 @@ class DateRecurringIndex(UnIndex):
             recurdef = recurdef()
 
         from dateutil import rrule
-        if isinstance(recurdef, rrule) or isinstance(recurdef, rrule.rruleset):
+        if isinstance(recurdef, rrule.rrule) or isinstance(recurdef, rrule.rruleset):
             recurconf = RecurConfICal(start, recurdef, until, dst=self.dst)
         else:
             # TODO: don't i get an string and have explicitly cast it into int?
