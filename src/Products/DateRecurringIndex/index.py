@@ -107,7 +107,9 @@ class DateRecurringIndex(UnIndex):
             recurdef = recurdef()
 
         from dateutil import rrule
-        if isinstance(recurdef, rrule.rrule) or isinstance(recurdef, rrule.rruleset):
+        if isinstance(recurdef, rrule.rrule) or\
+           isinstance(recurdef, rrule.rruleset) or\
+           isinstance(recurdef, str):
             recurconf = RecurConfICal(start, recurdef, until, dst=self.dst)
         else:
             # TODO: don't i get an string and have explicitly cast it into int?
@@ -235,15 +237,15 @@ class DateRecurringIndex(UnIndex):
 
     security.declareProtected(VIEW_PERMISSION, 'getStartAttribute')
     def getStartAttribute(self):
-        return self.start
+        return self.attr_start
 
     security.declareProtected(VIEW_PERMISSION, 'getRecurDefAttribute')
     def getRecurDefAttribute(self):
-        return self.recurdef
+        return self.attr_recurdef
 
     security.declareProtected(VIEW_PERMISSION, 'getUntilAttribute')
     def getUntilAttribute(self):
-        return self.until
+        return self.attr_until
 
     security.declareProtected(VIEW_PERMISSION, 'getDSTBehaviour')
     def getDSTBehaviour(self):
