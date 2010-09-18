@@ -30,8 +30,6 @@ The recurrence must include the base date even if the recurrence rule start date
     >>> start = datetime(2010,01,01,0,0,0,0,pytz.timezone('CET'))
     >>> until = datetime(2010,01,05,0,0,0,0,pytz.timezone('CET'))
 
-    >>> interact( locals() )
-
     >>> recrule = RecurConfICal(start, rrule.rrule(rrule.DAILY, dtstart=start, until=until), until)
     >>> list(IRecurringSequence(recrule))
     [datetime.datetime(2010, 1, 1, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
@@ -64,6 +62,22 @@ The recurrence must include the base date even if the recurrence rule start date
         datetime.datetime(2010, 1, 10, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
         datetime.datetime(2010, 10, 10, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>)]
 
+
+    >>> rulestr = """
+    ... DTSTART:19970902T090000-0300
+    ... RRULE:FREQ=DAILY;INTERVAL=10;COUNT=5
+    ... """
+    >>> recrule = RecurConfICal(start, rulestr, until)
+    >>> list(IRecurringSequence(recrule))
+    [datetime.datetime(1997, 9, 2, 9, 0, tzinfo=tzoffset(None, -10800)),
+        datetime.datetime(1997, 9, 12, 9, 0, tzinfo=tzoffset(None, -10800)),
+        datetime.datetime(1997, 9, 22, 9, 0, tzinfo=tzoffset(None, -10800)),
+        datetime.datetime(1997, 10, 2, 9, 0, tzinfo=tzoffset(None, -10800)),
+        datetime.datetime(1997, 10, 12, 9, 0, tzinfo=tzoffset(None, -10800))]
+
+    >>> from Products.DateRecurringIndex.interfaces import IRecurringIntSequence
+    >>> list(IRecurringIntSequence(recrule))
+    [1070158320, 1070172720, 1070187120, 1070202960, 1070217360]
 
 
 general
