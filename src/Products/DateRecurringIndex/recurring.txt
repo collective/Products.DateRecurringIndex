@@ -79,6 +79,7 @@ The recurrence must include the base date even if the recurrence rule start date
     >>> list(IRecurringIntSequence(recrule))
     [1070158320, 1070172720, 1070187120, 1070202960, 1070217360]
 
+TODO: test when no DTSTART in rulestr is given
 
 general
 -------
