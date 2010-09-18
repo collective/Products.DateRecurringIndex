@@ -96,18 +96,30 @@ class RecurConfICal(RecurConf):
 def recurringSequenceICal(recurconf):
     """ Sequence of datetime objects from dateutil's recurrence rules
     """
-    if isinstance(recurconf.recrule, dateutil.rrule.rruleset):
+    rset = None
+    if isinstance(recurconf.recrule, dateutil.rrule.rruleset) or\
+       isinstance(recurconf.recrule, dateutil.rrule.rrule):
         # recurconf.recrule may have rrules, exrules, rdates, exdates
-        rset = recurconf.recrule
-    else:
-        rset = dateutil.rrule.rruleset()
-    if isinstance(recurconf.recrule, dateutil.rrule.rrule):
-        rset.rrule(recurconf.recrule)
-    rset.rdate(recurconf.start) # always include the start date itself
+        if isinstance(recurconf.recrule, dateutil.rrule.rrule):
+            rset = dateutil.rrule.rruleset()
+            rset.rrule(recurconf.recrule)
+        else:
+            rset = recurconf.recrule
+        ## TODO: check again
+        ## always include the start date itself
+        ## NO: wether rules include it or they don't allow it
+        #rset.rdate(recurconf.start)
+    elif isinstance(recurconf.recrule, str):
+        # RFC2445 string
+        rset = dateutil.rrule.rrulestr(recurconf.recrule,
+                                       forceset=True)
     # TODO: check dtstart and until/count for all rrule and exrules
     #       calculating without until/count takes loooong
     # rest should have been set by application who
-    return list(rset)
+    if rset:
+        return list(rset)
+    else:
+        return None
 
 @adapter(IRecurConfTimeDelta)
 @implementer(IRecurringSequence)
