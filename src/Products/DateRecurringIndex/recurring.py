@@ -111,8 +111,12 @@ def recurringSequenceICal(recurconf):
         #rset.rdate(recurconf.start)
     elif isinstance(recurconf.recrule, str):
         # RFC2445 string
+        # forceset: always return a rruleset
+        # dtstart: optional used when no dtstart is in rfc2445 string
+        #          recurconf.start is used which may be an event's endDate
         rset = dateutil.rrule.rrulestr(recurconf.recrule,
-                                       forceset=True)
+                                       forceset=True,
+                                       dtstart=recurconf.start)
     # TODO: check dtstart and until/count for all rrule and exrules
     #       calculating without until/count takes loooong
     # rest should have been set by application who
