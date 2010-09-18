@@ -1,6 +1,6 @@
 =====================
 DateRangeInRangeIndex
-===================== 
+=====================
 
 --------------
 Overall tests.
@@ -9,20 +9,23 @@ Overall tests.
 Lets define some dummy events and catalog them.
 
 	>>> import pytz
-	>>> cet = pytz.timezone('CET') 
+	>>> cet = pytz.timezone('CET')
     >>> events = {
     ...     'nonr': ((2005,01,01,00,00,00,0,cet), 0,     None),
     ...     'days': ((2006,02,01,00,00,00,0,cet), 24*60, (2006,02,05,00,00,00,0,cet)),
     ...     'mins': ((2007,03,01,00,00,00,0,cet), 5,     (2007,03,05,00,00,00,0,cet)),
     ...     'dstc': ((2008,03,01,00,00,00,0,cet), 60*3,  (2008,06,01,00,00,00,0,cet)),
     ... }
+
+    >>> interact( locals() )
+
     >>> dummies = self.buildDummies(events)
     >>> self.catalogDummies(dummies)
 
 
 Query the nonr (non-recurring)
 ------------------------------
-    
+
 	>>> from datetime import datetime
 	>>> cat = self.app.catalog
 	>>> query = {
@@ -34,7 +37,7 @@ Query the nonr (non-recurring)
 	>>> res = cat(**query)
 	>>> res[0].id
 	'nonr'
-	
+
 Query the day (recur every day)
 -------------------------------
 
@@ -65,7 +68,7 @@ Query the mins (recur every 5 minutes)
 	>>> ids.sort()
 	>>> ids
 	['days', 'mins', 'nonr']
-	
+
 Query the dstc (recur over a dst chnage)
 ----------------------------------------
 
@@ -80,7 +83,7 @@ Query the dstc (recur over a dst chnage)
 	>>> ids.sort()
 	>>> ids
 	['days', 'dstc', 'mins', 'nonr']
-	
+
 	>>> query = {
 	...     'recurr': {
 	...         'query': datetime(2008,03,03,00,00,00,0,cet),
@@ -92,8 +95,8 @@ Query the dstc (recur over a dst chnage)
 	>>> ids.sort()
 	>>> ids
 	['dstc']
-	
-	
+
+
 -------------
 complex tests
 -------------
