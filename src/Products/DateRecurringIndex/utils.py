@@ -65,6 +65,7 @@ def dt2int(dt):
     """
     if dt is None:
         return 0
+    # TODO: if dt has not timezone information, guess and set it
     dt = utc(dt)
     value = (((dt.year*12+dt.month)*31+dt.day)*24+dt.hour)*60+dt.minute
     return value
