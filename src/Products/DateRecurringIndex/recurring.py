@@ -24,44 +24,6 @@ DSTADJUST = 'adjust'
 DSTKEEP   = 'keep'
 DSTAUTO   = 'auto'
 
-
-#class RRuleSet(object):
-#    implements(IRRuleSet)
-#    def __init__(self, rrules=[], rdates=[], exrules=[], exdates=[]):
-#        self.rrules = rrules
-#        self.rdates = rdates
-#        self.exrules = exrules
-#        self.exdates = exdates
-
-#class RRule(object):
-#    """ dateutil.rrule data structures.
-#    FAQ
-#    ===
-#    Question: Why not using dateutil.rrule instances?
-#    Answer: We don't want to store them directly on fields. Implementation can
-#            be changed too.
-#    """
-#    implements(IRRule)
-#    def __init__(self, freq=None, dtstart=None, interval=None, wkst=None,
-#                 count=None, until=None):
-#        self.freq = freq
-#        self.dtstart = dtstart
-#        self.interval = interval
-#        self.wkst = wkst
-#        self.count = count
-#        self.until = until
-#
-#    @property
-#    def rrule(self):
-#        rrule = dateutil.rrule.rrule(
-#            self.freq,
-#            dtstart = self.dtstart,
-#            interval = self.interval,
-#            wkst = self.wkst,
-#            count = self.count,
-#            until = self.until)
-#        return rrule
-
 class RecurConf(object):
     """RecurrenceRule object"""
     def __init__(self, start, recrule=None, until=None, dst=DSTAUTO):
@@ -97,18 +59,11 @@ def recurringSequenceICal(recurconf):
     """ Sequence of datetime objects from dateutil's recurrence rules
     """
     rset = None
-    if isinstance(recurconf.recrule, dateutil.rrule.rruleset) or\
-       isinstance(recurconf.recrule, dateutil.rrule.rrule):
-        # recurconf.recrule may have rrules, exrules, rdates, exdates
-        if isinstance(recurconf.recrule, dateutil.rrule.rrule):
-            rset = dateutil.rrule.rruleset()
-            rset.rrule(recurconf.recrule)
-        else:
-            rset = recurconf.recrule
-        ## TODO: check again
-        ## always include the start date itself
-        ## NO: wether rules include it or they don't allow it
-        #rset.rdate(recurconf.start)
+    if isinstance(recurconf.recrule, dateutil.rrule.rrule):
+        rset = dateutil.rrule.rruleset()
+        rset.rrule(recurconf.recrule)
+    elif isinstance(recurconf.recrule, dateutil.rrule.rruleset):
+        rset = recurconf.recrule
     elif isinstance(recurconf.recrule, str):
         # RFC2445 string
         # forceset: always return a rruleset
@@ -119,7 +74,6 @@ def recurringSequenceICal(recurconf):
                                        dtstart=recurconf.start)
     # TODO: check dtstart and until/count for all rrule and exrules
     #       calculating without until/count takes loooong
-    # rest should have been set by application who
     if rset:
         return list(rset)
     else:
