@@ -59,8 +59,9 @@ def recurringSequenceICal(recurconf):
     """ Sequence of datetime objects from dateutil's recurrence rules
     """
     rset = None
-    # corner case, intentional behavior:
-    # if recurconf.recrule excludes the event's start date, it won't be indexed
+    # the event's start date isn't explicitly set here. so if the recurrence
+    # rule's result does not include the start date, it won't be indexed
+    # but that's intentional and a corner case too
     if isinstance(recurconf.recrule, dateutil.rrule.rrule):
         rset = dateutil.rrule.rruleset()
         rset.rrule(recurconf.recrule)
