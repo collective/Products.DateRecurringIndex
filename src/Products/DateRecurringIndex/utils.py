@@ -7,6 +7,7 @@ from DateTime import DateTime
 
 utctz = pytz.timezone('UTC')
 
+# TODO: let guesstz guess the time zone not via zope's DateTime
 def guesstz(DT):
     """'Guess' pytz from a zope DateTime.
 
@@ -90,6 +91,9 @@ def anydt(dt):
     if dt is None:
         return None
     if not isinstance(dt, datetime.datetime):
+        # TODO:!!! try to use datetime directly instead of converting it from
+        # DateTime. The reason for this is, that DateTime sets the timezone
+        # to something set via zope.conf (really?) or set by the server
         if not isinstance(dt, DateTime):
             dt = DateTime(dt)
         dt = pydt(dt)
