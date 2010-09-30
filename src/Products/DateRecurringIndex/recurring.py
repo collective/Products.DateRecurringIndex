@@ -59,7 +59,7 @@ class RecurConfICal(RecurConf):
 def recurrence_normalize(date, delta=None, dstmode=DSTADJUST):
     """Fixes invalid UTC offsets from recurrence calculations
     @param date: datetime instance to normalize.
-    @param delta: integer or datetime.timedelta instance
+    @param delta: datetime.timedelta instance
     @param dstmode: is either DSTADJUST, DSTKEEP or DSTAUTO. On DSTADJUST we have a
             more human behaviour on daylight saving time changes: 8:00 on
             day before spring dst-change plus 24h results in 8:00 day after
@@ -70,10 +70,13 @@ def recurrence_normalize(date, delta=None, dstmode=DSTADJUST):
             DSTAUTO uses DSTADJUST for a delta >=24h and DSTKEEP for < 24h.
 
     """
-    if isinstance(delta, datetime.timedelta): delta = delta.seconds
-    if not date.tzinfo:
+    try:
+        assert(bool(date.tzinfo))
+    except:
         raise TypeError, u'Cannot normalize timezone naive dates'
     assert(dstmode in [DSTADJUST, DSTKEEP, DSTAUTO])
+    if delta: assert(isinstance(delta, datetime.timedelta)) # Easier in Java
+    delta = delta.seconds + delta.days*24*3600 # convert to seconds
     if dstmode==DSTAUTO and delta<24*60*60:
         dstmode = DSTKEEP
     elif dstmode==DSTAUTO:
@@ -100,7 +103,7 @@ def recurringSequenceICal(recurconf):
     if until:
         try:
             # start.tzinfo xnor until.tzinfo. both present or missing
-            assert(not(start.tzinfo ^ until.tzinfo))
+            assert(not(bool(start.tzinfo) ^ bool(until.tzinfo)))
         except:
             raise TypeError, u'Timezones for both until and start have to be' \
                              + u'present or missing'
@@ -127,10 +130,9 @@ def recurringSequenceICal(recurconf):
     before = None
     tznaive = not start.tzinfo and True or False
     for cnt, date in enumerate(rset):
-
         # Limit number of recurrences otherwise calculations take too long
-        if cnt >= MAXCOUNT: break
-        if count and count > cnt: break
+        if cnt+1 > MAXCOUNT: break
+        if count and cnt+1 > count: break
         if until and date > until: break
 
         # For very first occurence which is the starting date, the timezone
