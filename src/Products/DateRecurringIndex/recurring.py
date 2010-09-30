@@ -2,7 +2,7 @@
 # BSD derivative License
 
 import datetime
-import dateutil
+from dateutil import rrule
 from utils import pydt
 from utils import dt2int
 from utils import utc
@@ -24,15 +24,18 @@ DSTADJUST = 'adjust'
 DSTKEEP   = 'keep'
 DSTAUTO   = 'auto'
 
+MAXCOUNT  = 1000 # Maximum number of occurrences
+
 class RecurConf(object):
     """RecurrenceRule object"""
-    def __init__(self, start, recrule=None, until=None, dst=DSTAUTO):
+    def __init__(self, start, recrule=None, until=None, dst=DSTAUTO, count=None):
         self._start = None
         self._until = None
         self.start = start
         self.until = until
         self.recrule = recrule
         self.dst = dst
+        self.count = count
 
     def get_start(self):
         return self._start
@@ -64,19 +67,19 @@ def recurrence_normalize(date, delta=None, dstmode=DSTADJUST):
             recurconf.recrule < 24h this will fail!
             If DSTKEEP is selected, the time is added in its real hours, so
             the above example results in 9:00 on day after dst-change.
-            DSTAUTO uses DSTADJUST for >=24h and DSTKEEP for < 24h
-            recurconf.recrule delta minutes.
+            DSTAUTO uses DSTADJUST for a delta >=24h and DSTKEEP for < 24h.
 
     """
+    if isinstance(delta, datetime.timedelta): delta = delta.seconds
     if not date.tzinfo:
-        raise KeyError, u'Cannot normalize timezone naive dates'
-    assert(dst in [DSTADJUST, DSTKEEP, DSTAUTO])
-    if dst==DSTAUTO and delta<24*60:
-        dst = DSTKEEP
-    elif dst==DSTAUTO:
-        dst = DSTADJUST
+        raise TypeError, u'Cannot normalize timezone naive dates'
+    assert(dstmode in [DSTADJUST, DSTKEEP, DSTAUTO])
+    if dstmode==DSTAUTO and delta<24*60*60:
+        dstmode = DSTKEEP
+    elif dstmode==DSTAUTO:
+        dstmode = DSTADJUST
 
-    if dst==DSTADJUST:
+    if dstmode==DSTADJUST:
         return date.replace(tzinfo=date.tzinfo.normalize(date).tzinfo)
     else: # DSTKEEP
         return date.tzinfo.normalize(date)
@@ -87,41 +90,58 @@ def recurrence_normalize(date, delta=None, dstmode=DSTADJUST):
 def recurringSequenceICal(recurconf):
     """ Sequence of datetime objects from dateutil's recurrence rules
     """
-    if isinstance(recurconf.recrule, dateutil.rrule.rrule):
-        rset = dateutil.rrule.rruleset()
-        rset.rrule(recurconf.recrule)
-    elif isinstance(recurconf.recrule, dateutil.rrule.rruleset):
-        rset = recurconf.recrule
-    elif isinstance(recurconf.recrule, str):
+    start = recurconf.start
+    recrule = recurconf.recrule
+    dst = recurconf.dst
+    until = recurconf.until
+    count = recurconf.count
+
+    # TODO: that's catched anyways when comparing both vars. Maybe leave out.
+    if until:
+        try:
+            # start.tzinfo xnor until.tzinfo. both present or missing
+            assert(not(start.tzinfo ^ until.tzinfo))
+        except:
+            raise TypeError, u'Timezones for both until and start have to be' \
+                             + u'present or missing'
+
+    if isinstance(recrule, rrule.rrule):
+        rset = rrule.rruleset()
+        rset.rrule(recrule)
+    elif isinstance(recrule, rrule.rruleset):
+        rset = recrule
+    elif isinstance(recrule, str):
         # RFC2445 string
         # forceset: always return a rruleset
         # dtstart: optional used when no dtstart is in rfc2445 string
         #          recurconf.start is used which may be an event's endDate
-        rset = dateutil.rrule.rrulestr(recurconf.recrule,
-                                       dtstart=recurconf.start,
-                                       forceset=True
-                                       # compatible=True
-                                       )
-    # RCF2445: Always include start date
-    rset.rdate(recurconf.start)
-    # TODO: check dtstart and until/count for all rrule and exrules
-    #       calculating without until/count takes loooong
+        rset = rrule.rrulestr(recrule,
+                             dtstart=start,
+                             forceset=True
+                             # compatible=True
+                             )
 
-    # TODO: don't allwo timezone naive dates
-    # No DST normalizing for timezone naive dates
-    if not recurconf.start.tzinfo: return list(rset)
+    rset.rdate(start) # RCF2445: Always include start date
 
-    # Timezone normalizing and returning
+    ### Timezone normalizing and returning
     before = None
-    for date in list(rset):
-        if not before:
-            # very first occurence - no need for normalizing
-            yield date
-        else:
+    tznaive = not start.tzinfo and True or False
+    for cnt, date in enumerate(rset):
+
+        # Limit number of recurrences otherwise calculations take too long
+        if cnt >= MAXCOUNT: break
+        if count and count > cnt: break
+        if until and date > until: break
+
+        # For very first occurence which is the starting date, the timezone
+        # should be correct and timezone normalizing not needed
+        # For timezone naive dates there is also no need for normalizing
+        if before and not tznaive:
             delta = date - before
             date = recurrence_normalize(date, delta, dst)
-            yield date
-            before = date
+        yield date
+        before = date
+    return
 
 
 @adapter(IRecurConfTimeDelta)
@@ -139,8 +159,7 @@ def recurringSequenceTimeDelta(recurconf):
                 recurconf.recrule < 24h this will fail!
                 If DSTKEEP is selected, the time is added in its real hours, so
                 the above example results in 9:00 on day after dst-change.
-                DSTAUTO uses DSTADJUST for >=24h and DSTKEEP for < 24h
-                recurconf.recrule delta minutes.
+                DSTAUTO uses DSTADJUST for a delta >=24h and DSTKEEP for < 24h.
 
     @return: a sequence of dates
     """
