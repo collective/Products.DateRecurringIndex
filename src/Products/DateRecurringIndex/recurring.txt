@@ -21,50 +21,12 @@ minutes until a end datetime.
     >>> from pprint import pprint
 
 
-RecurConfICal Tests
-===================
 
-The recurrence must include the base date even if the recurrence rule start date
-(dtstart) is higher than the base date.
+RecurConfICal RFC 2445 rrulestr tests
+=====================================
 
-    >>> start = datetime(2010,01,01,0,0,0,0,pytz.timezone('CET'))
-    >>> until = datetime(2010,01,05,0,0,0,0,pytz.timezone('CET'))
-
-    >>> recrule = RecurConfICal(start, rrule.rrule(rrule.DAILY, dtstart=start, until=until), until)
-    >>> list(IRecurringSequence(recrule))
-    [datetime.datetime(2010, 1, 1, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2010, 1, 2, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2010, 1, 3, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2010, 1, 4, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2010, 1, 5, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>)]
-
-
-    >>> start = datetime(2010,01,01,0,0,0,0,pytz.timezone('CET'))
-    >>> until = datetime(2016,01,02,0,0,0,0,pytz.timezone('CET'))
-    >>> recrule = RecurConfICal(start, rrule.rrule(rrule.YEARLY, dtstart=start, interval=2, count=2, until=until), until)
-    >>> list(IRecurringSequence(recrule))
-    [datetime.datetime(2010, 1, 1, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2012, 1, 1, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>)]
-
-
-    >>> start = datetime(2010,01,01,0,0,0,0,pytz.timezone('CET'))
-    >>> until = datetime(2010,01,10,0,0,0,0,pytz.timezone('CET'))
-    >>> ruleset = rrule.rruleset()
-    >>> ruleset.rrule(rrule.rrule(rrule.DAILY, dtstart=start, until=until))
-    >>> ruleset.rdate(datetime(2010,10,10,0,0,0,0,pytz.timezone('CET')))
-    >>> ruleset.exrule(rrule.rrule(rrule.DAILY, dtstart=start, interval=2, until=until))
-    >>> ruleset.exdate(datetime(2010,01,02,0,0,0,0,pytz.timezone('CET')))
-    >>> recrule = RecurConfICal(start, ruleset, until)
-    >>> list(IRecurringSequence(recrule))
-    [datetime.datetime(2010, 1, 4, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2010, 1, 6, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2010, 1, 8, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2010, 1, 10, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2010, 10, 10, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>)]
-
-
-RFC 2445 rrulestr tests
------------------------
+Basic
+-----
 
 Timezone naive calculations. Timezone naivety should be the exception...
     >>> start = datetime(2010,01,01,0,0)
@@ -76,7 +38,6 @@ Timezone naive calculations. Timezone naivety should be the exception...
         datetime.datetime(2010, 1, 21, 0, 0),
         datetime.datetime(2010, 1, 31, 0, 0),
         datetime.datetime(2010, 2, 10, 0, 0)]
-
 
 The same with the timezone set.
     >>> at = pytz.timezone('Europe/Vienna')
@@ -90,12 +51,14 @@ The same with the timezone set.
         datetime.datetime(2010, 1, 31, 0, 0, tzinfo=<DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>),
         datetime.datetime(2010, 2, 10, 0, 0, tzinfo=<DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>)]
 
-
 Get the integer representations from this recurrence rule
     >>> from Products.DateRecurringIndex.interfaces import IRecurringIntSequence
     >>> list(IRecurringIntSequence(recrule))
     [1076762820, 1076777220, 1076791620, 1076806020, 1076820420]
 
+
+Crossing Daylight Saving Time Boundaries
+----------------------------------------
 
 Timezone aware Daylight Saving Time dates crossing
     >>> start = at.localize(datetime(2010,10,28,9,0))
@@ -122,6 +85,11 @@ cases.
         datetime.datetime(2010, 10, 31, 8, 0, tzinfo=<DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>),
         datetime.datetime(2010, 11, 1, 8, 0, tzinfo=<DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>)]
 
+TODO: test DSTAUTO
+
+
+Limiting number of occurences
+-----------------------------
 
 Until (date until recurrence happens) and count (Number of occurences) can also
 be set in the RecurConfICal object, instead of defining it in the rrule.
@@ -131,33 +99,42 @@ If MAXCOUNT is exceeded, recurrence generation will stop regardless of any other
 setting.
 
 ...init
+    >>> at = pytz.timezone('Europe/Vienna')
     >>> rulestr = """RRULE:FREQ=DAILY;INTERVAL=1"""
     >>> start = at.localize(datetime(2010,01,01,0,0))
     >>> until = at.localize(datetime(2010,01,02,0,0))
 
 ...until
-    >>> recrule = RecurConfICal(start, rulestr, until)
+    >>> recrule = RecurConfICal(start, recrule=rulestr, until=until)
     >>> list(IRecurringSequence(recrule))
-    >>> interact( locals() )
+    [datetime.datetime(2010, 1, 1, 0, 0, tzinfo=<DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>),
+        datetime.datetime(2010, 1, 2, 0, 0, tzinfo=<DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>)]
 
 ...count
-    >>> recrule = RecurConfICal(start, rulestr, count=3)
+    >>> recrule = RecurConfICal(start, recrule=rulestr, count=3)
     >>> list(IRecurringSequence(recrule))
-    >>> interact( locals() )
+    [datetime.datetime(2010, 1, 1, 0, 0, tzinfo=<DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>),
+        datetime.datetime(2010, 1, 2, 0, 0, tzinfo=<DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>),
+        datetime.datetime(2010, 1, 3, 0, 0, tzinfo=<DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>)]
 
 ...until and count
 You can mix both until and count. What happens earlier will stop recurrence
     >>> recrule = RecurConfICal(start, rulestr, until, count=3)
     >>> list(IRecurringSequence(recrule))
-    >>> interact( locals() )
+    [datetime.datetime(2010, 1, 1, 0, 0, tzinfo=<DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>),
+        datetime.datetime(2010, 1, 2, 0, 0, tzinfo=<DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>)]
 
 ...MAXCOUNT is important to precent (unintentional/intentional) abuse. It's
 set to 1000, is configurable (TODO) or - for this test - set from outside...
+    >>> from Products.DateRecurringIndex import recurring
+    >>> recurring.MAXCOUNT = 5
     >>> recrule = RecurConfICal(start, rulestr)
-    >>> interact( locals() )
     >>> list(IRecurringSequence(recrule))
-
-
+    [datetime.datetime(2010, 1, 1, 0, 0, tzinfo=<DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>),
+        datetime.datetime(2010, 1, 2, 0, 0, tzinfo=<DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>),
+        datetime.datetime(2010, 1, 3, 0, 0, tzinfo=<DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>),
+        datetime.datetime(2010, 1, 4, 0, 0, tzinfo=<DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>),
+        datetime.datetime(2010, 1, 5, 0, 0, tzinfo=<DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>)]
 
 
 Timezone naive limitations
@@ -173,7 +150,7 @@ DTSTART dates for individual rrules does not work for now anyways
     ... DTSTART:20100101T090000Z
     ... RRULE:FREQ=DAILY;INTERVAL=10;COUNT=5
     ... """
-    >>> recrule = RecurConfICal(start, rulestr, until)
+    >>> recrule = RecurConfICal(start, rulestr)
     >>> list(IRecurringSequence(recrule))
     Traceback (most recent call last):
     ...
@@ -181,18 +158,68 @@ DTSTART dates for individual rrules does not work for now anyways
 
 
 Timezone aware parsing regarding RFC2445 does not work
-    >>> rstr = """DTSTART;TZID=Europe/Vienna:20101029T090000
+    >>> rulestr = """DTSTART;TZID=Europe/Vienna:20101029T090000
     ... RRULE:FREQ=DAILY;INTERVAL=1;COUNT=4
     ... """
-    >>> list(dateutil.rrule.rrulestr(rstr))
+    >>> recrule = RecurConfICal(start, rulestr)
+    >>> list(IRecurringSequence(recrule))
     Traceback (most recent call last):
     ...
     ValueError: unsupported DTSTART parm: TZID=EUROPE/VIENNA
 
 
 
+RecurConfICal rrule tests
+=========================
+
+The recurrence must include the base date even if the recurrence rule start date
+(dtstart) is higher than the base date.
+
+    >>> cet = pytz.timezone('CET')
+
+    >>> start = cet.localize(datetime(2010,01,01,0,0))
+    >>> until = cet.localize(datetime(2010,01,05,0,0))
+
+    >>> recrule = RecurConfICal(start,
+    ...     rrule.rrule(rrule.DAILY, dtstart=start, until=until),
+    ...     until)
+    >>> list(IRecurringSequence(recrule))
+    [datetime.datetime(2010, 1, 1, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
+        datetime.datetime(2010, 1, 2, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
+        datetime.datetime(2010, 1, 3, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
+        datetime.datetime(2010, 1, 4, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
+        datetime.datetime(2010, 1, 5, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>)]
+
+
+    >>> start = cet.localize(datetime(2010,01,01,0,0))
+    >>> until = cet.localize(datetime(2016,01,02,0,0))
+    >>> recrule = RecurConfICal(start,
+    ...     rrule.rrule(rrule.YEARLY, dtstart=start, interval=2, count=2),
+    ...     until)
+    >>> list(IRecurringSequence(recrule))
+    [datetime.datetime(2010, 1, 1, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
+        datetime.datetime(2012, 1, 1, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>)]
+
+Demo on a complex ruleset
+    >>> start = cet.localize(datetime(2010,01,01,0,0))
+    >>> until1 = cet.localize(datetime(2010,01,10,0,0))
+    >>> until2 = cet.localize(datetime(2010,01,20,0,0))
+    >>> ruleset = rrule.rruleset()
+    >>> ruleset.rrule(rrule.rrule(rrule.DAILY, dtstart=start, until=until1))
+    >>> ruleset.rdate(cet.localize(datetime(2010,01,20,0,0)))
+    >>> ruleset.exrule(rrule.rrule(rrule.DAILY, dtstart=start, until=until1, interval=2,))
+    >>> ruleset.exdate(cet.localize(datetime(2010,01,02,0,0)))
+    >>> recrule = RecurConfICal(start, recrule=ruleset, until=until2)
+    >>> list(IRecurringSequence(recrule))
+    [datetime.datetime(2010, 1, 4, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
+        datetime.datetime(2010, 1, 6, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
+        datetime.datetime(2010, 1, 8, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
+        datetime.datetime(2010, 1, 10, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
+        datetime.datetime(2010, 1, 20, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>)]
+
+
 TimeDelta tests
----------------
+===============
 
 The simplest case is to just have a one-time event.
 
@@ -338,28 +365,28 @@ Here the correct behaviour on day level with DSTKEEP.
 Usally we want an clever behaviour, dependend on delta. This is implemented
 with DSTAUTO, which is the default behaviour.
 
-Here the correct behaviour on day level it chooses DSTADJUST.
+Here the correct behaviour on day level or above: DSTADJUST is choosen.
 
     >>> start = datetime(2008,03,29,11,0,0,0,pytz.timezone('CET'))
     >>> until = datetime(2008,03,31,11,0,0,0,pytz.timezone('CET'))
     >>> until = until.replace(tzinfo=until.tzinfo.normalize(until).tzinfo)
+    >>> until
+    datetime.datetime(2008, 3, 31, 11, 0, tzinfo=<DstTzInfo 'CET' CEST+2:00:00 DST>)
+
     >>> recrule = RecurConfTimeDelta(start, 24*60, until)
-    >>> seq = IRecurringSequence(recrule)
-    >>> seq = list(seq)
-    >>> pprint(seq)
+    >>> list(IRecurringSequence(recrule))
     [datetime.datetime(2008, 3, 29, 11, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
         datetime.datetime(2008, 3, 30, 11, 0, tzinfo=<DstTzInfo 'CET' CEST+2:00:00 DST>),
         datetime.datetime(2008, 3, 31, 11, 0, tzinfo=<DstTzInfo 'CET' CEST+2:00:00 DST>)]
 
-The correct behaviour on below day level: it chooses DSTKEEP.
+
+The correct behaviour on below day level: DSTKEEP is choosen.
 
     >>> start = datetime(2008,03,29,21,0,0,0,pytz.timezone('CET'))
     >>> until = datetime(2008,03,30,21,0,0,0,pytz.timezone('CET')) - timedelta(microseconds=1)
     >>> until = until.replace(tzinfo=until.tzinfo.normalize(until).tzinfo)
     >>> recrule = RecurConfTimeDelta(start, 60, until)
-    >>> seq = IRecurringSequence(recrule)
-    >>> seq = list(seq)
-    >>> len(seq)
+    >>> len(list(IRecurringSequence(recrule)))
     23
 
 recurringIntSequence
