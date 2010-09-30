@@ -63,6 +63,8 @@ The recurrence must include the base date even if the recurrence rule start date
         datetime.datetime(2010, 10, 10, 0, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>)]
 
 
+RFC 2445 rrulestr tests
+-----------------------
     >>> rulestr = """
     ... DTSTART:19970902T090000-0300
     ... RRULE:FREQ=DAILY;INTERVAL=10;COUNT=5
@@ -79,10 +81,21 @@ The recurrence must include the base date even if the recurrence rule start date
     >>> list(IRecurringIntSequence(recrule))
     [1070158320, 1070172720, 1070187120, 1070202960, 1070217360]
 
+Timezone aware parsing regarding RFC2445 does not work
+    >>> rstr = """DTSTART;TZID=Europe/Vienna:20101029T090000
+    ... RRULE:FREQ=DAILY;INTERVAL=1;COUNT=4
+    ... """
+    >>> list(dateutil.rrule.rrulestr(rstr))
+    Traceback (most recent call last):
+    ...
+    ValueError: unsupported DTSTART parm: TZID=EUROPE/VIENNA
+
+
 TODO: test when no DTSTART in rulestr is given
 
-general
--------
+
+TimeDelta tests
+---------------
 
 The simplest case is to just have a one-time event.
 
@@ -303,6 +316,8 @@ First with UTC
     >>> seqdt = list(IRecurringIntSequence(RecurConfTimeDelta(dt, 0, None)))
     >>> seqDT[0] == seqdt[0]
     True
+
+    >>> interact( locals() )
 
 Now with GMT+2 (CET with DST)
 
