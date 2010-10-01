@@ -1,3 +1,19 @@
+* see if timedelta implementation is significantly faster than python-dateutil rrule
+  * same functionality can be modeled with rrule
+* if not, drop timedelta implementation
+    * it's hard to keep both in one package. index's recurdef attribute serves
+      two totally differnt masters. checking, which recurrence implementation
+      should be used - based on string or int comparisons where always a str
+      may be given - is too error prone.
+* if you have to keep timedelta implementation, make it configurable via inded management screen.
+    (radio buttons)
+
+
+
+
+
+###################################
+
 size measuerment
 
 >>> import dateutil
