@@ -165,6 +165,7 @@ def recurringSequenceTimeDelta(recurconf):
 
     @return: a sequence of dates
     """
+    # TODO: adjust code to recurringSequenceICal. e.g. using MAXCOUNT, count, ..
     start = recurconf.start
     delta = recurconf.recrule
     until = recurconf.until
