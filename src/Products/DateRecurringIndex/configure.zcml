@@ -1,13 +1,11 @@
 <configure xmlns="http://namespaces.zope.org/zope"
-    i18n_domain="Products.DateRecurringIndex">
-
-    <!-- configure xmlns="http://namespaces.zope.org/zope"
     xmlns:five="http://namespaces.zope.org/five"
     i18n_domain="Products.DateRecurringIndex" -->
-    <!-- five:registerPackage package="." initialize=".initialize" /-->
 
-    <adapter factory=".recurring.recurringSequenceICal" />
-    <adapter factory=".recurring.recurringSequenceTimeDelta" />
-    <adapter factory=".recurring.recurringIntSequence" />
+  <five:registerPackage package="." initialize=".initialize" />
+
+  <adapter factory=".recurring.recurringSequenceICal" />
+  <adapter factory=".recurring.recurringSequenceTimeDelta" />
+  <adapter factory=".recurring.recurringIntSequence" />
 
 </configure>
