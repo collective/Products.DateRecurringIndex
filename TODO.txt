@@ -9,6 +9,44 @@
     (radio buttons)
 
 
+PERFORMANCE OF RRULESTR vs TIMEDELTA
+====================================
+timedelta is twice as fast for some tests
+
+>>> from Products.DateRecurringIndex.recurring import RecurConfICal, RecurConfTimeDelta
+>>> from Products.DateRecurringIndex.interfaces import IRecurringSequence
+>>> from datetime import datetime
+>>> import pytz
+>>> from Products.DateRecurringIndex.recurring import DSTADJUST, DSTKEEP, DSTAUTO
+>>>
+>>> import zope.component
+>>> from Products.DateRecurringIndex.recurring import recurringSequenceICal, recurringSequenceTimeDelta
+>>> zope.component.provideAdapter(recurringSequenceICal)
+>>> zope.component.provideAdapter(recurringSequenceTimeDelta)
+>>>
+>>> at = pytz.timezone('Europe/Vienna')
+>>> rulestr = """RRULE:FREQ=MINUTELY;INTERVAL=1"""
+>>> start = at.localize(datetime(2010,01,01,0,0))
+>>> until = at.localize(datetime(2010,02,02,0,0))
+>>>
+>>>
+>>>
+>>> recruleA = RecurConfICal(start, recrule=rulestr, until=until)
+>>> recruleB = RecurConfTimeDelta(start, recrule=1, until=until)
+>>> import time
+>>> ts = time.time()
+>>> len(list(IRecurringSequence(recruleA)))
+46081
+>>> time.time() - ts
+2.3700261116027832
+>>>
+>>> ts = time.time()
+>>> len(list(IRecurringSequence(recruleB)))
+46081
+>>> time.time() - ts
+1.6278479099273682
+>>>
+
 
 
 

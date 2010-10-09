@@ -125,7 +125,7 @@ You can mix both until and count. What happens earlier will stop recurrence
         datetime.datetime(2010, 1, 2, 0, 0, tzinfo=<DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>)]
 
 ...MAXCOUNT is important to precent (unintentional/intentional) abuse. It's
-set to 1000, is configurable (TODO) or - for this test - set from outside...
+a constant, is configurable (TODO) or - for this test - set from outside...
     >>> from Products.DateRecurringIndex import recurring
     >>> recurring.MAXCOUNT = 5
     >>> recrule = RecurConfICal(start, rulestr)
