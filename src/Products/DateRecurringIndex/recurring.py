@@ -24,7 +24,7 @@ DSTADJUST = 'adjust'
 DSTKEEP   = 'keep'
 DSTAUTO   = 'auto'
 
-MAXCOUNT  = 1000 # Maximum number of occurrences
+MAXCOUNT  = 100000 # Maximum number of occurrences
 
 class RecurConf(object):
     """RecurrenceRule object"""
@@ -131,7 +131,7 @@ def recurringSequenceICal(recurconf):
     tznaive = not start.tzinfo and True or False
     for cnt, date in enumerate(rset):
         # Limit number of recurrences otherwise calculations take too long
-        if cnt+1 > MAXCOUNT: break
+        if MAXCOUNT and cnt+1 > MAXCOUNT: break
         if count and cnt+1 > count: break
         if until and date > until: break
 
