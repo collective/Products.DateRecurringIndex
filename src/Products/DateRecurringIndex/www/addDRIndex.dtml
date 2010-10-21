@@ -14,10 +14,10 @@
     <div class="form-label">
 	    <label for="recurrence_type_ical">recurrence type</label>
 	    <input id="recurrence_type_ical" type="radio"
-		       name="extra.start:recurrence_type"
+		       name="extra.recurrence_type:record"
 			   value="ical" />
 		<input id="recurrence_type_timedelta" type="radio"
-		       name="extra.start:recurrence_type"
+		       name="extra.recurrence_type:record"
 			   value="timedelta" />
 	</div>
 
