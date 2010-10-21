@@ -78,8 +78,8 @@ def setup_dri():
 
 TESTFILES = [
     'index.txt',
-    'recurring.txt',
-    'utils.txt',
+#    'recurring.txt',
+#    'utils.txt',
 ]
 
 def test_suite():
