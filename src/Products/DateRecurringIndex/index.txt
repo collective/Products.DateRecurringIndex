@@ -1,6 +1,6 @@
-=====================
-DateRangeInRangeIndex
-=====================
+===================
+DateRrecurringIndex
+===================
 
 --------------
 Overall tests.
