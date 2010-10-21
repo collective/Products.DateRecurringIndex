@@ -40,6 +40,7 @@ class DRITestcase(ztc.ZopeTestCase):
         # abuse:
         extra = DummyEvent(None, 'start', 'delta', 'until') # abuse, but works
         extra.dst = 'adjust'
+        extra.recurrence_type = 'timedelta'
         dri = DateRecurringIndex('recurr', extra=extra)
         self.app.catalog.addIndex('recurr', dri)
         self.app.catalog.addColumn('id')
