@@ -18,12 +18,20 @@ from Products.PluginIndexes.common import safe_callable
 from Products.PluginIndexes.common.util import parseIndexRequest
 from Products.PluginIndexes.common.UnIndex import UnIndex
 from Products.PluginIndexes.DateIndex.DateIndex import DateIndex
-from Products.DateRecurringIndex.recurring import dt2int
-from Products.DateRecurringIndex.recurring import pydt
-from Products.DateRecurringIndex.recurring import DSTADJUST, DSTKEEP, DSTAUTO
-from Products.DateRecurringIndex.recurring import RecurConfTimeDelta
-from Products.DateRecurringIndex.recurring import RecurConfICal
-from Products.DateRecurringIndex.interfaces import IRecurringIntSequence
+from plone.event.utils import dt2int, pydt
+from plone.event.utils import DSTADJUST, DSTAUTO, DSTKEEP
+from plone.event.recurrence import (
+    recurrence_int_sequence,
+    recurrence_sequence_ical,
+    recurrence_sequence_timedelta
+)
+
+# from Products.DateRecurringIndex.recurring import dt2int
+# from Products.DateRecurringIndex.recurring import pydt
+# from Products.DateRecurringIndex.recurring import DSTADJUST, DSTKEEP, DSTAUTO
+# from Products.DateRecurringIndex.recurring import RecurConfTimeDelta
+# from Products.DateRecurringIndex.recurring import RecurConfICal
+# from Products.DateRecurringIndex.interfaces import IRecurringIntSequence
 
 logger = logging.getLogger('Products.DateRecurringIndex.index')
 
@@ -35,7 +43,7 @@ MGMT_PERMISSION = 'Manage ZCatalogIndex Entries'
 manage_addDRIndexForm = DTMLFile('www/addDRIndex', globals())
 
 def manage_addDRIndex(self, id, extra=None, REQUEST=None, RESPONSE=None,
-                         URL3=None):
+                      URL3=None):
     """Adds a date recurring index"""
     result = self.manage_addIndex(id, 'DateRecurringIndex', extra=extra,
                                   REQUEST=REQUEST, RESPONSE=RESPONSE, URL1=URL3)
@@ -110,14 +118,16 @@ class DateRecurringIndex(UnIndex):
         if isinstance(recurdef, rrule.rrule) or\
            isinstance(recurdef, rrule.rruleset) or\
            isinstance(recurdef, str):
-            recurconf = RecurConfICal(start, recurdef, until, dst=self.dst)
+            dates = recurrence_sequence_ical(start, recurdef, until,
+                                             dst=self.dst)
         else:
             # TODO: don't i get an string and have explicitly cast it into int?
             if not isinstance(recurdef, int):
                 recurdef = None
-            recurconf = RecurConfTimeDelta(start, recurdef, until, dst=self.dst)
+            dates = recurrence_sequence_timedelta(start, recurdef, until,
+                                                  dst=self.dst)
 
-        newvalues = IISet(IRecurringIntSequence(recurconf))
+        newvalues = IISet(recurrence_int_sequence(dates))
         oldvalues = self._unindex.get(documentId, _marker)
 
         if oldvalues is not _marker and not difference(newvalues, oldvalues):
