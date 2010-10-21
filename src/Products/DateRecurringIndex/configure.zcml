@@ -5,8 +5,4 @@
 
   <five:registerPackage package="." initialize=".initialize" />
 
-  <!-- adapter factory=".recurring.recurringSequenceICal" />
-  <adapter factory=".recurring.recurringSequenceTimeDelta" />
-  <adapter factory=".recurring.recurringIntSequence" /-->
-
 </configure>

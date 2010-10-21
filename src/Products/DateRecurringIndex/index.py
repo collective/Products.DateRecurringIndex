@@ -26,13 +26,6 @@ from plone.event.recurrence import (
     recurrence_sequence_timedelta
 )
 
-# from Products.DateRecurringIndex.recurring import dt2int
-# from Products.DateRecurringIndex.recurring import pydt
-# from Products.DateRecurringIndex.recurring import DSTADJUST, DSTKEEP, DSTAUTO
-# from Products.DateRecurringIndex.recurring import RecurConfTimeDelta
-# from Products.DateRecurringIndex.recurring import RecurConfICal
-# from Products.DateRecurringIndex.interfaces import IRecurringIntSequence
-
 logger = logging.getLogger('Products.DateRecurringIndex.index')
 
 _marker = object()
@@ -98,12 +91,12 @@ class DateRecurringIndex(UnIndex):
         # taken partly from DateIndex
         status = 0
 
-        # TODO: why this try clause?
         try:
             start = getattr(obj, self.attr_start)
             if safe_callable(start):
                 start = start()
         except AttributeError:
+            # not an event
             return status
 
         until = getattr(obj, self.attr_until, None)
