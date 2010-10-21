@@ -11,6 +11,16 @@
 	    <input id="id" type="text" name="id" />
 	</div>
 
+    <div class="form-label">
+	    <label for="recurrence_type_ical">recurrence type</label>
+	    <input id="recurrence_type_ical" type="radio"
+		       name="extra.start:recurrence_type"
+			   value="ical" />
+		<input id="recurrence_type_timedelta" type="radio"
+		       name="extra.start:recurrence_type"
+			   value="timedelta" />
+	</div>
+
 	<div class="form-label">
 	    <label for="start">start</label>
 	    <input id="start" type="text" name="extra.start:record" />

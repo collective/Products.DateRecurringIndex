@@ -70,6 +70,7 @@ class DateRecurringIndex(UnIndex):
         """
         UnIndex.__init__(self, id, ignore_ex=None, call_methods=None,
                          extra=None, caller=None)
+        self.recurrence_type = extra.recurrence_type
         self.attr_start = extra.start
         self.attr_recurdef = extra.recurdef
         self.attr_until = extra.until
@@ -107,14 +108,10 @@ class DateRecurringIndex(UnIndex):
         if safe_callable(recurdef):
             recurdef = recurdef()
 
-        from dateutil import rrule
-        if isinstance(recurdef, rrule.rrule) or\
-           isinstance(recurdef, rrule.rruleset) or\
-           isinstance(recurdef, str):
+        if self.recurrence_type == "ical":
             dates = recurrence_sequence_ical(start, recurdef, until,
                                              dst=self.dst)
         else:
-            # TODO: don't i get an string and have explicitly cast it into int?
             if not isinstance(recurdef, int):
                 recurdef = None
             dates = recurrence_sequence_timedelta(start, recurdef, until,
@@ -237,6 +234,10 @@ class DateRecurringIndex(UnIndex):
         else:
             return r, (self.id,)
 
+
+    security.declareProtected(VIEW_PERMISSION, 'getRecurrenceType')
+    def getRecurrenceType(self):
+        return self.recurrence_type
 
     security.declareProtected(VIEW_PERMISSION, 'getStartAttribute')
     def getStartAttribute(self):
