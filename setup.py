@@ -38,6 +38,7 @@ setup(name='Products.DateRecurringIndex',
           'pytz',
           'DateTime>=2.12',
           'python-dateutil',
+          'plone.event',
           # Zope 2 dependencies are missing
       ],
       extras_require={'test': ['interlude',]},
