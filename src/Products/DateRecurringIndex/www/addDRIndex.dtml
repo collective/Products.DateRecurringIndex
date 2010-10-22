@@ -12,10 +12,12 @@
 	</div>
 
     <div class="form-label">
-	    <label for="recurrence_type_ical">recurrence type</label>
+		recurrence type
+	    <label for="recurrence_type_ical">ical</label>
 	    <input id="recurrence_type_ical" type="radio"
 		       name="extra.recurrence_type:record"
 			   value="ical" />
+	    <label for="recurrence_type_timedelta">timedelta</label>
 		<input id="recurrence_type_timedelta" type="radio"
 		       name="extra.recurrence_type:record"
 			   value="timedelta" />
