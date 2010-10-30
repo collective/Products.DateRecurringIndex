@@ -12,7 +12,7 @@
 	</div>
 
     <div class="form-label">
-		recurrence type
+		Recurrence type
 	    <label for="recurrence_type_ical">ical</label>
 	    <input id="recurrence_type_ical" type="radio"
 		       name="extra.recurrence_type:record"
@@ -26,25 +26,25 @@
 	<div class="form-label">
 	    <label for="start">start</label>
 	    <input id="start" type="text" name="extra.start:record" />
-		<em>attribute- or fieldname of date start</em> mandatory
+		<em>Attribute- or fieldname of date start.</em> mandatory
 	</div>
 
 	<div class="form-label">
 	    <label for="recurdef">recurdef</label>
 	    <input id="recurdef" type="text" name="extra.recurdef:record" />
-		<em>attribute- or fieldname of recurrence rule definition as delta in minutes or dateutil.rrule</em> mandatory
+		<em>Attribute- or fieldname of recurrence rule definition. RFC2445 compatible string or timedelta.</em> mandatory
 	</div>
 
 	<div class="form-label">
 	    <label for="until">until</label>
 	    <input id="until" type="text" name="extra.until:record" />
-		<em>attribute- or fieldname of date until</em> mandatory
+		<em>Attribute- or fieldname of date until.</em> mandatory
 	</div>
 
 	<div class="form-label">
 	    <label for="dst">dst</label>
 	    <input id="dst" type="text" name="extra.dst:record" />
-		<em>Daylight saving border behaviour</em> mandatory (adjust, keep or auto)
+		<em>Daylight saving border behaviour (adjust|keep|auto).</em> mandatory
 	</div>
 
     <div class="form-optional">
