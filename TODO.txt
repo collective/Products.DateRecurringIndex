@@ -1,3 +1,16 @@
+TODO
+====
+* test indexing and querying the catalog with ical recurrence type
+* backcheck Products.DateIndex for new developments and get em into here
+* add index_naive_time_as_local extra property
+
+
+
+
+
+OBSOLETE
+========
+
 * see if timedelta implementation is significantly faster than python-dateutil rrule
   * same functionality can be modeled with rrule
 * if not, drop timedelta implementation
