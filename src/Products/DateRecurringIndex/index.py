@@ -17,7 +17,6 @@ from Products.ZCatalog.Catalog import Catalog
 from Products.PluginIndexes.common import safe_callable
 from Products.PluginIndexes.common.util import parseIndexRequest
 from Products.PluginIndexes.common.UnIndex import UnIndex
-from Products.PluginIndexes.DateIndex.DateIndex import DateIndex
 from plone.event.utils import dt2int, pydt
 from plone.event.utils import DSTADJUST, DSTAUTO, DSTKEEP
 from plone.event.recurrence import (
@@ -25,8 +24,11 @@ from plone.event.recurrence import (
     recurrence_sequence_ical,
     recurrence_sequence_timedelta
 )
+from zope.interface import Interface
+from zope.schema import Text
+from zope.interface import implements
 
-logger = logging.getLogger('Products.DateRecurringIndex.index')
+logger = logging.getLogger('Products.DateRecurringIndex')
 
 _marker = object()
 
@@ -34,6 +36,15 @@ VIEW_PERMISSION = 'View'
 MGMT_PERMISSION = 'Manage ZCatalogIndex Entries'
 
 manage_addDRIndexForm = DTMLFile('www/addDRIndex', globals())
+
+
+class IDateRecurringIndex(Interface):
+    recurrence_type = Text(title=u'Recurrence type (ical|timedelta).')
+    attr_start = Text(title=u'Attribute- or fieldname of date start.')
+    attr_recurdef = Text(title=u'Attribute- or fieldname of recurrence rule definition. RFC2445 compatible string or timedelta.')
+    attr_until = Text(title=u'Attribute- or fieldname of date until.')
+    dst = Text(title=u'Daylight saving border behaviour (adjust|keep|auto).')
+
 
 def manage_addDRIndex(self, id, extra=None, REQUEST=None, RESPONSE=None,
                       URL3=None):
@@ -46,8 +57,7 @@ def manage_addDRIndex(self, id, extra=None, REQUEST=None, RESPONSE=None,
 class DateRecurringIndex(UnIndex):
     """
     """
-    __implements__ = (getattr(UnIndex,'__implements__',()),)
-
+    implements(IDateRecurringIndex)
     meta_type="DateRecurringIndex"
     security = ClassSecurityInfo()
     manage_options= (
