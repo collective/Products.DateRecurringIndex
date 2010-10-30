@@ -85,9 +85,9 @@ def test_suite():
 
     return unittest.TestSuite([
         ztc.ZopeDocFileSuite(
-            file,
+            filename,
             optionflags=optionflags,
             globs={'interact': interact,},
             test_class=DRITestcase
-        ) for file in TESTFILES
+        ) for filename in TESTFILES
     ])
