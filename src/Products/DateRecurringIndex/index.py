@@ -27,6 +27,7 @@ from plone.event.recurrence import (
 from zope.interface import Interface
 from zope.schema import Text
 from zope.interface import implements
+from OFS.PropertyManager import PropertyManager
 
 logger = logging.getLogger('Products.DateRecurringIndex')
 
@@ -34,8 +35,6 @@ _marker = object()
 
 VIEW_PERMISSION = 'View'
 MGMT_PERMISSION = 'Manage ZCatalogIndex Entries'
-
-manage_addDRIndexForm = DTMLFile('www/addDRIndex', globals())
 
 
 class IDateRecurringIndex(Interface):
@@ -46,30 +45,31 @@ class IDateRecurringIndex(Interface):
     dst = Text(title=u'Daylight saving border behaviour (adjust|keep|auto).')
 
 
-def manage_addDRIndex(self, id, extra=None, REQUEST=None, RESPONSE=None,
-                      URL3=None):
-    """Adds a date recurring index"""
-    result = self.manage_addIndex(id, 'DateRecurringIndex', extra=extra,
-                                  REQUEST=REQUEST, RESPONSE=RESPONSE, URL1=URL3)
-    return result
-
-
-class DateRecurringIndex(UnIndex):
+class DateRecurringIndex(UnIndex, PropertyManager):
     """
     """
     implements(IDateRecurringIndex)
+
     meta_type="DateRecurringIndex"
-    security = ClassSecurityInfo()
-    manage_options= (
-        {'label': 'Settings',
-         'action': 'manage_main',
-        },
-        {'label': 'Browse',
-         'action': 'manage_browse'
-        },
-    )
-    manage_main = PageTemplateFile('www/manageDRIndex', globals())
-    query_options = ['query', 'range']
+    query_options = ('query', 'range')
+
+    manage = manage_main = DTMLFile('www/addDRIndex', globals())
+
+    _properties=({'id':'recurrence_type', 'type':'string', 'mode':'w'},
+                 {'id':'attr_start', 'type':'string', 'mode':'w'},
+                 {'id':'attr_recurdef', 'type':'string', 'mode':'w'},
+                 {'id':'attr_until', 'type':'string', 'mode':'w'},
+                 {'id':'dst', 'type':'string', 'mode':'w'},)
+
+    manage_main._setName( 'manage_main' )
+    manage_options = ( { 'label' : 'Settings'
+                       , 'action' : 'manage_main'
+                       },
+                       {'label': 'Browse',
+                        'action': 'manage_browse',
+                       },
+                     ) + PropertyManager.manage_options
+
 
     def __init__(self, id, ignore_ex=None, call_methods=None,
                  extra=None, caller=None):
@@ -267,3 +267,10 @@ class DateRecurringIndex(UnIndex):
 
 
 InitializeClass( DateRecurringIndex )
+
+manage_addDRIndexForm = DTMLFile( 'www/addDRIndex', globals() )
+def manage_addDRIndex(self, id, extra=None, REQUEST=None, RESPONSE=None,
+                      URL3=None):
+    """Adds a date recurring index"""
+    return self.manage_addIndex(id, 'DateRecurringIndex', extra=extra,
+                                  REQUEST=REQUEST, RESPONSE=RESPONSE, URL1=URL3)
