@@ -1,12 +1,12 @@
-===================
-DateRrecurringIndex
-===================
+==================
+DateRecurringIndex
+==================
 
---------------
-Overall tests.
---------------
+-------------
+Overall tests
+-------------
 
-Lets define some dummy events and catalog them.
+Let's define some dummy events and catalog them.
 
 	>>> import pytz
 	>>> cet = pytz.timezone('CET')
@@ -37,6 +37,7 @@ Query the nonr (non-recurring)
 	>>> res = cat(**query)
 	>>> res[0].id
 	'nonr'
+
 
 Query the day (recur every day)
 -------------------------------
@@ -69,7 +70,8 @@ Query the mins (recur every 5 minutes)
 	>>> ids
 	['days', 'mins', 'nonr']
 
-Query the dstc (recur over a dst chnage)
+
+Query the dstc (recur over a DST change)
 ----------------------------------------
 
 	>>> query = {
@@ -98,7 +100,7 @@ Query the dstc (recur over a dst chnage)
 
 
 -------------
-complex tests
+Complex tests
 -------------
 
 TODO
