@@ -8,8 +8,8 @@ Overall tests
 
 Let's define some dummy events and catalog them.
 
-	>>> import pytz
-	>>> cet = pytz.timezone('CET')
+    >>> import pytz
+    >>> cet = pytz.timezone('CET')
     >>> events = {
     ...     'nonr': ((2005,01,01,00,00,00,0,cet), 0,     None),
     ...     'days': ((2006,02,01,00,00,00,0,cet), 24*60, (2006,02,05,00,00,00,0,cet)),
@@ -26,77 +26,77 @@ Let's define some dummy events and catalog them.
 Query the nonr (non-recurring)
 ------------------------------
 
-	>>> from datetime import datetime
-	>>> cat = self.app.catalog
-	>>> query = {
-	...     'recurr': {
-	...         'query': datetime(2005,01,01,00,00,00,0,cet),
-	...         'range': 'max',
-	...     },
-	... }
-	>>> res = cat(**query)
-	>>> res[0].id
-	'nonr'
+    >>> from datetime import datetime
+    >>> cat = self.app.catalog
+    >>> query = {
+    ...     'recurr': {
+    ...         'query': datetime(2005,01,01,00,00,00,0,cet),
+    ...         'range': 'max',
+    ...     },
+    ... }
+    >>> res = cat(**query)
+    >>> res[0].id
+    'nonr'
 
 
 Query the day (recur every day)
 -------------------------------
 
-	>>> query = {
-	...     'recurr': {
-	...         'query': datetime(2006,05,03,00,00,00,0,cet),
-	...         'range': 'max',
-	...     },
-	... }
-	>>> res = cat(**query)
-	>>> ids = [brain.id for brain in res]
-	>>> ids.sort()
-	>>> ids
-	['days', 'nonr']
+    >>> query = {
+    ...     'recurr': {
+    ...         'query': datetime(2006,05,03,00,00,00,0,cet),
+    ...         'range': 'max',
+    ...     },
+    ... }
+    >>> res = cat(**query)
+    >>> ids = [brain.id for brain in res]
+    >>> ids.sort()
+    >>> ids
+    ['days', 'nonr']
 
 
 Query the mins (recur every 5 minutes)
 --------------------------------------
 
-	>>> query = {
-	...     'recurr': {
-	...         'query': datetime(2007,03,03,00,00,00,0,cet),
-	...         'range': 'max',
-	...     },
-	... }
-	>>> res = cat(**query)
-	>>> ids = [brain.id for brain in res]
-	>>> ids.sort()
-	>>> ids
-	['days', 'mins', 'nonr']
+    >>> query = {
+    ...     'recurr': {
+    ...         'query': datetime(2007,03,03,00,00,00,0,cet),
+    ...         'range': 'max',
+    ...     },
+    ... }
+    >>> res = cat(**query)
+    >>> ids = [brain.id for brain in res]
+    >>> ids.sort()
+    >>> ids
+    ['days', 'mins', 'nonr']
 
 
 Query the dstc (recur over a DST change)
 ----------------------------------------
 
-	>>> query = {
-	...     'recurr': {
-	...         'query': datetime(2008,03,03,00,00,00,0,cet),
-	...         'range': 'max',
-	...     },
-	... }
-	>>> res = cat(**query)
-	>>> ids = [brain.id for brain in res]
-	>>> ids.sort()
-	>>> ids
-	['days', 'dstc', 'mins', 'nonr']
+    >>> query = {
+    ...     'recurr': {
+    ...         'query': datetime(2008,03,03,00,00,00,0,cet),
+    ...         'range': 'max',
+    ...     },
+    ... }
+    >>> res = cat(**query)
+    >>> ids = [brain.id for brain in res]
+    >>> ids.sort()
+    >>> ids
+    ['days', 'dstc', 'mins', 'nonr']
 
-	>>> query = {
-	...     'recurr': {
-	...         'query': datetime(2008,03,03,00,00,00,0,cet),
-	...         'range': 'min',
-	...     },
-	... }
-	>>> res = cat(**query)
-	>>> ids = [brain.id for brain in res]
-	>>> ids.sort()
-	>>> ids
-	['dstc']
+    >>> query = {
+    ...     'recurr': {
+    ...         'query': datetime(2008,03,03,00,00,00,0,cet),
+    ...         'range': 'min',
+    ...     },
+    ... }
+    >>> res = cat(**query)
+    >>> ids = [brain.id for brain in res]
+    >>> ids.sort()
+    >>> ids
+    ['dstc']
 
 
 -------------
