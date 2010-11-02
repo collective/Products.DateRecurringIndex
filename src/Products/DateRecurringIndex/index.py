@@ -2,18 +2,13 @@
 # BSD derivative License
 
 import logging
-from types import IntType
 from AccessControl import ClassSecurityInfo
 from App.special_dtml import DTMLFile
 from App.class_init import InitializeClass
 from BTrees.IIBTree import IISet
-from BTrees.IIBTree import union
-from BTrees.IIBTree import multiunion
-from BTrees.IIBTree import intersection
-from BTrees.IIBTree import difference
+from BTrees.IIBTree import union, multiunion, intersection, difference
 from ZODB.POSException import ConflictError
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
-from Products.ZCatalog.Catalog import Catalog
 from Products.PluginIndexes.common import safe_callable
 from Products.PluginIndexes.common.util import parseIndexRequest
 from Products.PluginIndexes.common.UnIndex import UnIndex
@@ -27,7 +22,6 @@ from plone.event.recurrence import (
 from zope.interface import Interface
 from zope.schema import Text
 from zope.interface import implements
-from OFS.PropertyManager import PropertyManager
 
 logger = logging.getLogger('Products.DateRecurringIndex')
 
@@ -43,7 +37,7 @@ class IDateRecurringIndex(Interface):
     dst = Text(title=u'Daylight saving border behaviour (adjust|keep|auto).')
 
 
-class DateRecurringIndex(UnIndex, PropertyManager):
+class DateRecurringIndex(UnIndex):
     """
     """
     implements(IDateRecurringIndex)
@@ -52,27 +46,33 @@ class DateRecurringIndex(UnIndex, PropertyManager):
     security = ClassSecurityInfo()
     query_options = ('query', 'range')
 
-    recurrence_type = 'ical'
-    attr_start = None
-    attr_recurdef = None
-    attr_until = None
-    dst = DSTAUTO
-    # TODO: # index_naive_time_as_local = True # False means index as UTC
-    _properties=({'id':'recurrence_type', 'type':'string', 'mode':'w'},
-                 {'id':'attr_start', 'type':'string', 'mode':'w'},
-                 {'id':'attr_recurdef', 'type':'string', 'mode':'w'},
-                 {'id':'attr_until', 'type':'string', 'mode':'w'},
-                 {'id':'dst', 'type':'string', 'mode':'w'},)
+    manage_options= (
+        {'label': 'Settings',
+         'action': 'manage_main',
+        },
+        {'label': 'Browse',
+         'action': 'manage_browse'
+        },
+    )
+    manage_main = PageTemplateFile('www/manageDRIndex', globals())
 
-    manage = manage_main = DTMLFile('www/addDRIndex', globals())
-    manage_main._setName( 'manage_main' )
-    manage_options = ( { 'label' : 'Settings'
-                       , 'action' : 'manage_main'
-                       },
-                       {'label': 'Browse',
-                        'action': 'manage_browse',
-                       },
-                     ) + PropertyManager.manage_options
+    def __init__(self, id, ignore_ex=None, call_methods=None,
+                 extra=None, caller=None):
+        """ Initialize the index
+        @ param extra.recurrence_type:
+        @ param extra.start:
+        @ param extra.recurdef:
+        @ param extral.until:
+        @ param extral.dst:
+        """
+        UnIndex.__init__(self, id, ignore_ex=None, call_methods=None,
+                         extra=None, caller=None)
+        self.recurrence_type = extra.recurrence_type
+        self.attr_start = extra.start
+        self.attr_recurdef = extra.recurdef
+        self.attr_until = extra.until
+        assert(extra.dst in [DSTADJUST, DSTKEEP, DSTAUTO])
+        self.dst = extra.dst
 
 
     def index_object(self, documentId, obj, threshold=None):
@@ -260,11 +260,12 @@ class DateRecurringIndex(UnIndex, PropertyManager):
         return self.dst
 
 
-InitializeClass(DateRecurringIndex)
-
 manage_addDRIndexForm = DTMLFile( 'www/addDRIndex', globals() )
 def manage_addDRIndex(self, id, extra=None, REQUEST=None, RESPONSE=None,
                       URL3=None):
     """Adds a date recurring index"""
     return self.manage_addIndex(id, 'DateRecurringIndex', extra=extra,
                                   REQUEST=REQUEST, RESPONSE=RESPONSE, URL1=URL3)
+
+
+InitializeClass(DateRecurringIndex)
