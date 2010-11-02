@@ -13,13 +13,6 @@
 __author__ = """Jens Klein <jens@bluedynamics.com>"""
 __docformat__ = 'plaintext'
 
-import logging
-from App.Common import package_home
-
-PROJECTNAME = 'Products.DateRecurringIndex'
-logger = logging.getLogger(PROJECTNAME)
-product_globals = globals()
-
 def initialize(context):
     import index
     context.registerClass(
