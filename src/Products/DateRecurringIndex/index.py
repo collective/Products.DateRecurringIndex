@@ -49,9 +49,8 @@ class DateRecurringIndex(UnIndex, PropertyManager):
     implements(IDateRecurringIndex)
 
     meta_type="DateRecurringIndex"
+    security = ClassSecurityInfo()
     query_options = ('query', 'range')
-
-    manage = manage_main = DTMLFile('www/addDRIndex', globals())
 
     recurrence_type = 'ical'
     attr_start = None
@@ -65,6 +64,7 @@ class DateRecurringIndex(UnIndex, PropertyManager):
                  {'id':'attr_until', 'type':'string', 'mode':'w'},
                  {'id':'dst', 'type':'string', 'mode':'w'},)
 
+    manage = manage_main = DTMLFile('www/addDRIndex', globals())
     manage_main._setName( 'manage_main' )
     manage_options = ( { 'label' : 'Settings'
                        , 'action' : 'manage_main'
