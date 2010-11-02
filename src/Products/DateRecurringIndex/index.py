@@ -55,6 +55,12 @@ class DateRecurringIndex(UnIndex, PropertyManager):
 
     manage = manage_main = DTMLFile('www/addDRIndex', globals())
 
+    recurrence_type = 'ical'
+    attr_start = None
+    attr_recurdef = None
+    attr_until = None
+    dst = DSTAUTO
+    # TODO: # index_naive_time_as_local = True # False means index as UTC
     _properties=({'id':'recurrence_type', 'type':'string', 'mode':'w'},
                  {'id':'attr_start', 'type':'string', 'mode':'w'},
                  {'id':'attr_recurdef', 'type':'string', 'mode':'w'},
@@ -71,22 +77,6 @@ class DateRecurringIndex(UnIndex, PropertyManager):
                      ) + PropertyManager.manage_options
 
 
-    def __init__(self, id, ignore_ex=None, call_methods=None,
-                 extra=None, caller=None):
-        """ Initialize the index
-            @ param extra.start:
-            @ param extra.recurdef:
-            @ param extral.until:
-        """
-        UnIndex.__init__(self, id, ignore_ex=None, call_methods=None,
-                         extra=None, caller=None)
-        self.recurrence_type = extra.recurrence_type
-        self.attr_start = extra.start
-        self.attr_recurdef = extra.recurdef
-        self.attr_until = extra.until
-        assert(extra.dst in [DSTADJUST, DSTKEEP, DSTAUTO])
-        self.dst = extra.dst
-
     def index_object(self, documentId, obj, threshold=None):
         """index an object, normalizing the indexed value to an integer
 
@@ -99,8 +89,7 @@ class DateRecurringIndex(UnIndex, PropertyManager):
            o Objects which have 'None' as indexed value are *omitted*,
              by design.
         """
-        # taken partly from DateIndex
-        status = 0
+        returnStatus = 0
 
         try:
             start = getattr(obj, self.attr_start)
@@ -108,7 +97,7 @@ class DateRecurringIndex(UnIndex, PropertyManager):
                 start = start()
         except AttributeError:
             # not an event
-            return status
+            return returnStatus
 
         until = getattr(obj, self.attr_until, None)
         if safe_callable(until):
@@ -131,7 +120,7 @@ class DateRecurringIndex(UnIndex, PropertyManager):
         oldvalues = self._unindex.get(documentId, _marker)
 
         if oldvalues is not _marker and not difference(newvalues, oldvalues):
-            return 0
+            return returnStatus
 
         if oldvalues is not _marker:
             for oldvalue in oldvalues:
@@ -151,8 +140,8 @@ class DateRecurringIndex(UnIndex, PropertyManager):
             inserted = True
         if inserted:
             self._unindex[documentId] = IISet(newvalues)
-            return 1
-        return 0
+            returnStatus = 1
+        return returnStatus
 
     def unindex_object(self, documentId):
         """ carefully unindex the object with integer id 'documentId'"""
