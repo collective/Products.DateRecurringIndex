@@ -39,5 +39,7 @@ setup(name='Products.DateRecurringIndex',
           # Zope 2 dependencies are missing
       ],
       extras_require={'test': ['interlude', 'pytz']},
+      entry_points={'console_scripts':
+                    ['bench_dri = Products.DateRecurringIndex.bench:run']},
 )
 
