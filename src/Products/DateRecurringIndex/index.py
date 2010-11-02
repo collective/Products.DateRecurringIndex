@@ -82,12 +82,15 @@ class DateRecurringIndex(UnIndex, PropertyManager):
 
            o Normalized value has granularity of one minute.
 
-           o repeat by recurdef - wether a timedelta or a dateutil.recrule
-
-           o take as dst handling, see recurring.py and its test for details.
-
            o Objects which have 'None' as indexed value are *omitted*,
              by design.
+
+           o Repeat by recurdef - wether a timedelta or a RFC2445 reccurence
+             definition string
+
+           o Daylight Saving Time (dst) handling. see plone.event.recurrence.
+             Wether DSTAUTO, DSTADJUST or DSTKEEP.
+
         """
         returnStatus = 0
 
@@ -139,53 +142,54 @@ class DateRecurringIndex(UnIndex, PropertyManager):
             self.insertForwardIndexEntry( value, documentId )
             inserted = True
         if inserted:
-            self._unindex[documentId] = IISet(newvalues)
+            self._unindex[documentId] = IISet(newvalues) # TODO: IISet necessary here?
             returnStatus = 1
         return returnStatus
 
     def unindex_object(self, documentId):
-        """ carefully unindex the object with integer id 'documentId'"""
+        """ Carefully unindex the object with integer id 'documentId'"""
 
         values = self._unindex.get(documentId, None)
-        if values is None:
-            return
+        if values is _marker:
+            return None
         for value in values:
             self.removeForwardIndexEntry(value, documentId)
         try:
             del self._unindex[documentId]
+        except ConflictError:
+            raise
         except KeyError:
             logger.debug('Attempt to unindex nonexistent document id %s'
                          % documentId)
 
-    def _apply_index( self, request, cid='', type=type ):
+    def _apply_index(self, request, resultset=None):
         """Apply the index to query parameters given in the argument
 
         Normalize the 'query' arguments into integer values at minute
         precision before querying.
         """
         record = parseIndexRequest( request, self.id, self.query_options )
-        if record.keys == None:
+        if record.keys is None:
             return None
 
-        record.keys = map( pydt, record.keys )
-        keys = map( dt2int, record.keys )
+        keys = map(dt2int, map(pydt, record.keys))
 
         index = self._index
-        r = None
+        result = None
         opr = None
 
         operator = record.get( 'operator', self.useOperator )
-        if not operator in self.operators :
+        if not operator in self.operators:
             raise RuntimeError, "operator not valid: %s" % operator
 
         # depending on the operator we use intersection or union
-        if operator=="or":
+        if operator == "or":
             set_func = union
         else:
             set_func = intersection
 
         # range parameter
-        range_arg = record.get('range',None)
+        range_arg = record.get('range', None)
         if range_arg:
             opr = "range"
             opr_args = []
@@ -194,12 +198,12 @@ class DateRecurringIndex(UnIndex, PropertyManager):
             if range_arg.find("max") > -1:
                 opr_args.append("max")
 
-        if record.get('usage',None):
+        if record.get('usage', None):
             # see if any usage params are sent to field
             opr = record.usage.lower().split(':')
             opr, opr_args = opr[0], opr[1:]
 
-        if opr=="range":   # range search
+        if opr == "range": # range search
             if 'min' in opr_args:
                 lo = min(keys)
             else:
@@ -215,23 +219,26 @@ class DateRecurringIndex(UnIndex, PropertyManager):
             else:
                 setlist = index.values(lo)
 
-            r = multiunion(setlist)
+            result = multiunion(setlist)
 
         else: # not a range search
             for key in keys:
                 set = index.get(key, None)
                 if set is not None:
-                    if type(set) is IntType:
+                    if isinstance(set, int):
                         set = IISet((set,))
-                    r = set_func(r, set)
+                    else:
+                        # set can't be bigger than resultset
+                        set = intersection(set, resultset)
+                    result = set_func(result, set)
 
-        if isinstance(r, int):
-            r = IISet((r,))
+        if isinstance(result, int):
+            result = IISet((result,))
 
-        if r is None:
+        if result is None:
             return IISet(), (self.id,)
         else:
-            return r, (self.id,)
+            return result, (self.id,)
 
 
     security.declareProtected(VIEW_PERMISSION, 'getRecurrenceType')
