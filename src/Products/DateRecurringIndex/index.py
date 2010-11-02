@@ -31,10 +31,8 @@ from OFS.PropertyManager import PropertyManager
 
 logger = logging.getLogger('Products.DateRecurringIndex')
 
-_marker = object()
-
 VIEW_PERMISSION = 'View'
-MGMT_PERMISSION = 'Manage ZCatalogIndex Entries'
+_marker = object()
 
 
 class IDateRecurringIndex(Interface):
@@ -262,7 +260,7 @@ class DateRecurringIndex(UnIndex, PropertyManager):
         return self.dst
 
 
-InitializeClass( DateRecurringIndex )
+InitializeClass(DateRecurringIndex)
 
 manage_addDRIndexForm = DTMLFile( 'www/addDRIndex', globals() )
 def manage_addDRIndex(self, id, extra=None, REQUEST=None, RESPONSE=None,
