@@ -34,7 +34,7 @@ class DRITestcase(ztc.ZopeTestCase):
         return ids
 
 
-TESTFILES = ['index.txt',]
+TESTFILES = ['index.txt', 'index_timedelta.txt',]
 
 
 def test_suite():
