@@ -1,6 +1,6 @@
 import unittest
 import doctest
-from interlude import interact
+#from interlude import interact
 from Testing import ZopeTestCase as ztc
 from Products.PloneTestCase.layer import onsetup
 from Products.Five import zcml
@@ -29,8 +29,6 @@ class DRITestcase(ztc.ZopeTestCase):
         import Products.Five
         zcml.load_config('meta.zcml', Products.Five)
         zcml.load_config('configure.zcml', Products.Five)
-        import Products.DateRecurringIndex
-        zcml.load_config('configure.zcml', Products.DateRecurringIndex)
         fiveconfigure.debug_mode = False
 
     def afterSetUp(self):
@@ -67,19 +65,8 @@ class DRITestcase(ztc.ZopeTestCase):
         return ids
 
 
-"""
-@onsetup
-def setup_dri():
-    fiveconfigure.debug_mode = True
-    zcml.load_config('configure.zcml', Products.DateRecurringIndex)
-    fiveconfigure.debug_mode = False
-"""
-#setup_dri()
-#ztc.installProduct('DateRecurringIndex')
+TESTFILES = ['index.txt',]
 
-TESTFILES = [
-    'index.txt',
-]
 
 def test_suite():
 
@@ -87,7 +74,7 @@ def test_suite():
         ztc.ZopeDocFileSuite(
             filename,
             optionflags=optionflags,
-            globs={'interact': interact,},
+            globs={#'interact': interact,
+                },
             test_class=DRITestcase
-        ) for filename in TESTFILES
-    ])
+        ) for filename in TESTFILES])

@@ -17,7 +17,7 @@ Let's define some dummy events and catalog them.
     ...     'dstc': ((2008,03,01,00,00,00,0,cet), 60*3,  (2008,06,01,00,00,00,0,cet)),
     ... }
 
-    >>> interact( locals() )
+    >>> #interact( locals() )
 
     >>> dummies = self.buildDummies(events)
     >>> self.catalogDummies(dummies)
