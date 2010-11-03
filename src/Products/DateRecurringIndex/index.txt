@@ -6,6 +6,22 @@ DateRecurringIndex
 Overall tests
 -------------
 
+Initialize the catalog with DateRecurringIndex
+
+    >>> interact( locals() )
+
+    >>> from Products.DateRecurringIndex.tests import DummyExtras
+    >>> extra = DummyExtras(recurrence_type='timedelta', start='start',
+    ...                     recurdef='delta', until='until', dst='adjust')
+
+    >>> from Products.DateRecurringIndex.index import DateRecurringIndex
+    >>> dri = DateRecurringIndex('recurr', extra=extra)
+
+    >>> from Products.ZCatalog.Catalog import Catalog
+    >>> self.app.catalog = Catalog()
+    >>> self.app.catalog.addIndex('recurr', dri)
+    >>> self.app.catalog.addColumn('id')
+
 Let's define some dummy events and catalog them.
 
     >>> from Products.DateRecurringIndex.tests import DummyEvent
