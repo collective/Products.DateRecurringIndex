@@ -25,8 +25,8 @@ Let's define some dummy events and catalog them.
     >>> from Products.DateRecurringIndex.tests import DummyEvent
     >>> from datetime import datetime
     >>> import pytz
-
     >>> cet = pytz.timezone('CET')
+
     >>> nonr = DummyEvent(id='nonr', start=datetime(2005,01,01,00,00,00,0,cet))
     >>> days = DummyEvent(id='days', start=datetime(2006,02,01,00,00,00,0,cet),
     ...     recurdef=24*60, until=datetime(2006,02,05,00,00,00,0,cet))
