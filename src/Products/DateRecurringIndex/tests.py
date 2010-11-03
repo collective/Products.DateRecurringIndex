@@ -34,8 +34,6 @@ class DRITestcase(ztc.ZopeTestCase):
     def afterSetUp(self):
         """set up a base scenario"""
         self.app.catalog = Catalog()
-        extra = object()
-        # abuse:
         extra = DummyEvent(None, 'start', 'delta', 'until') # abuse, but works
         extra.dst = 'adjust'
         extra.recurrence_type = 'timedelta'
