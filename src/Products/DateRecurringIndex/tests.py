@@ -16,18 +16,17 @@ class DummyEvent(object):
         self.recurdef = recurdef
         self.until = until
 
+class DummyExtras(object):
+    def __init__(self, recurrence_type=None,
+                 start=None, recurdef=None, until=None, dst=None):
+        self.recurrence_type = recurrence_type
+        self.start = start
+        self.recurdef = recurdef
+        self.until = until
+        self.dst = dst
+
 class DRITestcase(ztc.ZopeTestCase):
     """Base TestCase for DateRecurringIndex."""
-
-    def afterSetUp(self):
-        """set up a base scenario"""
-        self.app.catalog = Catalog()
-        extra = DummyEvent(None, 'start', 'delta', 'until') # abuse, but works
-        extra.dst = 'adjust'
-        extra.recurrence_type = 'timedelta'
-        dri = DateRecurringIndex('recurr', extra=extra)
-        self.app.catalog.addIndex('recurr', dri)
-        self.app.catalog.addColumn('id')
 
     def idsOfBrainsSorted(self, brains):
         ids = [brain.id for brain in brains]
