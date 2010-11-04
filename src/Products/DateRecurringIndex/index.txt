@@ -53,8 +53,6 @@ Let's define some dummy events and catalog them.
 These are the dates indexed:
     >>> from plone.event.recurrence import recurrence_sequence_ical
 
-    >>> # interact( locals() )
-
     >>> list(recurrence_sequence_ical(start=nonr.start))
     [datetime.datetime(2010, 10, 10, 0, 0, tzinfo=<DstTzInfo 'CET' CEST+2:00:00 DST>)]
 
@@ -82,8 +80,63 @@ These are the dates indexed:
         datetime.datetime(2010, 10, 31, 4, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>)]
 
 
-This is what's in the catalog:
-TODO: show parts of distinct values of catalog
-i guess, timedelta isn't cataloging all events?
+
+Query the nonr (non-recurring)
+------------------------------
+
+    >>> cat = self.app.catalog
+    >>> query = {
+    ...     'recurr': {
+    ...         'query': datetime(2010,10,10,00,00,00,0,cet),
+    ...         'range': 'min',
+    ...     },
+    ... }
+    >>> res = cat(**query)
+
+    >>> sorted([it.id for it in res])
+    ['days', 'dstc', 'mins', 'nonr']
+
+    >>> cat = self.app.catalog
+    >>> query = {
+    ...     'recurr': {
+    ...         'query': datetime(2010,10,10,00,00,00,0,cet),
+    ...         'range': 'max',
+    ...     },
+    ... }
+    >>> res = cat(**query)
+
+    >>> sorted([it.id for it in res])
+    ['days', 'mins', 'nonr']
 
 
+Query the day (recur every day)
+-------------------------------
+
+    >>> query = {
+    ...     'recurr': {
+    ...         'query': [datetime(2010,10,11,00,00,00,0,cet),
+    ...                   datetime(2010,11,20,00,00,00,0,cet)],
+    ...         'range': 'min:max',
+    ...     },
+    ... }
+    >>> res = cat(**query)
+    >>> sorted([brain.id for brain in res])
+    ['days', 'dstc']
+
+
+Query the minute (recur every minute)
+-------------------------------
+
+    >>> query = {
+    ...     'recurr': {
+    ...         'query': [datetime(2010,10,10,00,10,00,0,cet),
+    ...                   datetime(2010,10,10,00,40,00,0,cet)],
+    ...         'range': 'min:max',
+    ...     },
+    ... }
+    >>> res = cat(**query)
+    >>> sorted([brain.id for brain in res])
+    ['mins']
+
+
+    >>> #interact( locals() )
