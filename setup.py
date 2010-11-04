@@ -12,7 +12,7 @@ license = open(os.path.join(os.path.dirname(__file__), 'LICENSE.txt')).read()
 setup(name='Products.DateRecurringIndex',
       version=version,
       description=shortdesc,
-      long_description=longdesc + license,
+      long_description=longdesc + '\n\n' + license,
       classifiers=[
       # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
             'Development Status :: 5 - Production/Stable',
