@@ -81,8 +81,8 @@ These are the dates indexed:
 
 
 
-Query the nonr (non-recurring)
-------------------------------
+Query min one specific date
+---------------------------
 
     >>> cat = self.app.catalog
     >>> query = {
@@ -92,9 +92,12 @@ Query the nonr (non-recurring)
     ...     },
     ... }
     >>> res = cat(**query)
-
     >>> sorted([it.id for it in res])
     ['days', 'dstc', 'mins', 'nonr']
+
+
+Query max one specific date
+---------------------------
 
     >>> cat = self.app.catalog
     >>> query = {
@@ -109,8 +112,8 @@ Query the nonr (non-recurring)
     ['days', 'mins', 'nonr']
 
 
-Query the day (recur every day)
--------------------------------
+Query timerange over days and dstc set
+--------------------------------------
 
     >>> query = {
     ...     'recurr': {
@@ -124,8 +127,8 @@ Query the day (recur every day)
     ['days', 'dstc']
 
 
-Query the minute (recur every minute)
--------------------------------
+Query timerange over mins set
+-----------------------------
 
     >>> query = {
     ...     'recurr': {
