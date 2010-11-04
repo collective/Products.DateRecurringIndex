@@ -148,7 +148,7 @@ class DateRecurringIndex(UnIndex):
         """ Carefully unindex the object with integer id 'documentId'"""
 
         values = self._unindex.get(documentId, None)
-        if values is _marker:
+        if values is None:
             return None
         for value in values:
             self.removeForwardIndexEntry(value, documentId)
