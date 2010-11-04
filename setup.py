@@ -38,7 +38,8 @@ setup(name='Products.DateRecurringIndex',
           'plone.event',
           # Zope 2 dependencies are missing
       ],
-      extras_require={'test': ['interlude', 'pytz']},
+      extras_require={'test': [#'interlude',
+                               'pytz']},
       entry_points={'console_scripts':
                     ['bench_dri = Products.DateRecurringIndex.bench:run']},
 )

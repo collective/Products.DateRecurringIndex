@@ -142,4 +142,4 @@ Query timerange over mins set
     ['mins']
 
 
-    >>> #interact( locals() )
+    >>> # interact( locals() )

@@ -1,6 +1,6 @@
 import unittest
 import doctest
-from interlude import interact
+#from interlude import interact
 from Testing import ZopeTestCase as ztc
 
 from Products.ZCatalog.Catalog import Catalog
@@ -43,7 +43,7 @@ def test_suite():
         ztc.ZopeDocFileSuite(
             filename,
             optionflags=optionflags,
-            globs={'interact': interact,
+            globs={#'interact': interact,
                 },
             test_class=DRITestcase
         ) for filename in TESTFILES])
