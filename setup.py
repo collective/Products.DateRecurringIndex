@@ -5,9 +5,10 @@ from setuptools import setup, find_packages
 import sys, os
 
 version = '2.0-dev'
-shortdesc = "Recurring Events, Index for Zope 2 Catalog. Replacement for old DateIndex."
-longdesc = open(os.path.join(os.path.dirname(__file__), 'README.txt')).read()
-license = open(os.path.join(os.path.dirname(__file__), 'LICENSE.txt')).read()
+shortdesc = "Zope 2 date index with support for recurring events."
+longdesc = open('README.txt').read() + "\n\n" +\
+           open(os.path.join("docs", "HISTORY.txt")).read()
+license = open(os.path.join("docs", 'LICENSE.txt')).read()
 
 setup(name='Products.DateRecurringIndex',
       version=version,
