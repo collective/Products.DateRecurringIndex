@@ -2,27 +2,58 @@
 Products.DateRecurringIndex
 ===========================
 
-A Zope 2 catalog index for indexing of recurring events. Its build to replace
-the default DatetIndex of Zope 2 and will produce the same results. As with
-DateIndex, an object needs to provide a start attribute.
+A Zope 2 catalog index with support for indexing of recurring events. It is a
+drop-in replacement for the Zope2 DateIndex and will produce the same results
+for non-recurring dates.
 
-The DateRecurringIndex takes two additional values into account:
+The DateRecurringIndex accepts following parameters:
 
-delta
-    an attribute returning the time in seconds of the interval for the
-    recurring date
+recurrence_type
+    Mandatory. The type of recurrence calculation ("ical" or "timedelta").
+    Mode "ical" follows the RFC2445 specification and expects RFC2445 compatible
+    recurrence definition strings from the recurdef attribute.
+    Mode "timedelta" expects an integer from the recurdef attribute which
+    defines the minutes between each occurence. Although the same recurrence
+    rule can be configured in "ical" mode, "timedelta" is faster for such
+    operations.
+
+start
+    Mandatory. The name of the objects attribute, which returns the start date.
+
+recurdef
+    Mandatory. The name of the objects attribute, which returns the recurrence
+    rule definitions.
 
 until
-    an attribute returning the date and time until the recurring should happen.
+    Optional. The name of the objects attribute, which returns the date, until
+    the recurrence should happen. In "ical" mode, the recurrence definition can
+    contain an UNTIL component. If not given at all, there is a MAXCOUNT ceiling
+    constant, defined in plone.event.recurrence, which defines the maximum
+    number of occurences.
 
-You can also configure the behaviour on daylight-saving (dst) border change.
-In short: On change from winter to summer 24h are added. So a recurring date -
-such as an event - should happen every day 11am. Taken the example day-before +
-24h = 12am day after dst change. Usally its not wanted behaviour on human
-calendars. Therefore you can control this behaviour: ``adjust``, ``keep`` and
-``auto``. See the recurring.txt doc-test file for detailed information about it.
-usally on human calendars auto work out fine, on technical calendars keep is
-the right choice.
+dst
+    Optional, defaults to DSTAUTO. Defines the "Daylight Saving Time" behavior
+    when a daylight-saving change is in between the recurrence.
+    Mode DSTADJUST: When crossing daylight saving time changes, the start time
+        of the date before DST change will be the same in value as afterwards.
+        It is adjusted relative to UTC. So 8:00 GMT+1 before will also result in
+        8:00 GMT+2 afterwards. This is what humans might expect when recurring
+        rules are defined.
+    Mode DSTKEEP: When crossing daylight saving time changes, the start time of
+        the date before and after DST change will be the same relative to UTC.
+        So, 8:00 GMT+1 before will result in 7:00 GMT+2 afterwards. This
+        behavior might be what machines expect, when recurrence rules are
+        defined.
+    Mode DSTAUTO:
+        If the relative delta between two occurences of a reucurrence sequence
+        is less than a day, DSTKEEP will be used - otherwise DSTADJUST. This
+        behavior is the default.
+
+
+Dependencies
+============
+
+This package is dependent on plone.event for recurrence calculations.
 
 
 Datetime.DateTime vs. datetime.datetime
@@ -31,8 +62,8 @@ Datetime.DateTime vs. datetime.datetime
 Inside Zope2 everybody uses DateTime.DateTime or iow the Zope-DateTime. At time
 of writing Zope-DateTime (around 1998) there was no good date/time
 implementation in python. But these days  we have a better implementation.
-Even if the pythons datetime implementation has its problems,
-together with pytz for timezone handling its very mature.
+Even if the pythons datetime implementation has its problems, together with pytz
+for timezone handling it is very mature.
 
 So, why is it covered here? Just because the above mentioned dst-handling works
 only if the start and until values are non-naive python datetimes. Just keep it
@@ -44,27 +75,16 @@ your event happens. If you go international and your event is shown in a
 different timezone - or in the same in a country without DST at all - it might
 differ and is not always at the the time.
 
-Todo, future plans
-==================
 
-Another good person with awareness of all this datetime-problems is
-Lennart Regebro. He pointed me to dateutil.rrule which will replace
-delta-in-seconds approach in one of the next releases.
-
-The index becomes slow (esp. on indexing time) if you have often short deltas
-for a long time (like forever). Also forever means to have a ceiling-date which
-is defined as forever. Even if its difficult to implement it might be better to
-calculate the recurring values at query-time for the queried range and use them
-in the query. This isnt trivial, at query-time it has to be fast even if there
-are many 100.000 objects cataloged. If there are resources it may happen to
-implement it this way, for now we stick to pre-calculation.
-
-
-Credits
+Authors
 =======
 
-* Copyright 2008-2009, BlueDynamics Alliance, Austria
+* Jens Klein <jens@bluedynamics.com> - Original implementation based on
+  timedelta.
+
+* Johannes Raggam <johannes@raggam.co.at> - Datetuil RFC2445 compatible
+  recurrence rules, refactoring parts into plone.event.
+
+* Copyright 2008-2010, BlueDynamics Alliance, Austria
 
 * under BSD License derivative
-
-* written by Jens Klein <jens@bluedynamics.com>
