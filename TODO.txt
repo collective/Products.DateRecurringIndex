@@ -1,11 +1,8 @@
 TODO
 ====
-* test indexing and querying the catalog with ical recurrence type
-* backcheck Products.DateIndex for new developments and get em into here
 * add index_naive_time_as_local extra property
-
-
-
+OK * test indexing and querying the catalog with ical recurrence type
+OK * backcheck Products.DateIndex for new developments and get em into here
 
 
 OBSOLETE
