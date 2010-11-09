@@ -142,7 +142,7 @@ class DateRecurringIndex(UnIndex):
 
         inserted = False
         for value in newvalues:
-            self.insertForwardIndexEntry( value, documentId )
+            self.insertForwardIndexEntry(value, documentId)
             inserted = True
         if inserted:
             self._unindex[documentId] = IISet(newvalues) # TODO: IISet necessary here?
