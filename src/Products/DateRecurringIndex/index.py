@@ -120,7 +120,11 @@ class DateRecurringIndex(UnIndex):
         newvalues = IISet(recurrence_int_sequence(dates))
         oldvalues = self._unindex.get(documentId, _marker)
 
-        if oldvalues is not _marker and not difference(newvalues, oldvalues):
+        if oldvalues is not _marker\
+           and not difference(newvalues, oldvalues)\
+           and not difference(oldvalues, newvalues):
+            # difference is calculated relative to first argument, so we have to
+            # use it twice here
             return returnStatus
 
         if oldvalues is not _marker:
@@ -135,6 +139,7 @@ class DateRecurringIndex(UnIndex):
                     logger.error("Should not happen: oldvalues was there,"
                                  " now it's not, for document with id %s" %
                                    documentId)
+
         inserted = False
         for value in newvalues:
             self.insertForwardIndexEntry( value, documentId )
@@ -146,7 +151,6 @@ class DateRecurringIndex(UnIndex):
 
     def unindex_object(self, documentId):
         """ Carefully unindex the object with integer id 'documentId'"""
-
         values = self._unindex.get(documentId, None)
         if values is None:
             return None
