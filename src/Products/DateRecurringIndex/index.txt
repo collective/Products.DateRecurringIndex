@@ -6,6 +6,7 @@ DateRecurringIndex
 Overall tests
 -------------
 
+    >>> # interact( locals() )
 
 iCalendar Recurrence Mode
 =========================
@@ -31,6 +32,39 @@ Let's define some dummy events and catalog them.
     >>> cet = pytz.timezone('CET')
 
     >>> from Products.DateRecurringIndex.tests import DummyEvent
+
+
+Index the same event more than once and test if index size changes.
+    >>> test_event = DummyEvent(id='test_event',
+    ...     start=datetime(2001,01,01),
+    ...     recurdef='RRULE:FREQ=DAILY;INTERVAL=1;COUNT=5')
+    >>> self.app.catalog.catalogObject(test_event, 'test_event')
+    1
+    >>> dri.indexSize()
+    5
+
+    >>> test_event = DummyEvent(id='test_event',
+    ...     start=datetime(2001,01,01),
+    ...     recurdef='RRULE:FREQ=DAILY;INTERVAL=1;COUNT=3')
+    >>> self.app.catalog.catalogObject(test_event, 'test_event')
+    1
+    >>> dri.indexSize()
+    3
+
+    >>> test_event = DummyEvent(id='test_event',
+    ...     start=datetime(2001,01,01),
+    ...     recurdef='RRULE:FREQ=DAILY;INTERVAL=1;COUNT=8')
+    >>> self.app.catalog.catalogObject(test_event, 'test_event')
+    1
+    >>> dri.indexSize()
+    8
+
+    >>> self.app.catalog.uncatalogObject('test_event')
+    >>> dri.indexSize()
+    0
+
+
+Index for querying later on...
     >>> nonr = DummyEvent(id='nonr', start=datetime(2010,10,10,00,00,00,0,cet))
     >>> days = DummyEvent(id='days', start=datetime(2010,10,10,00,00,00,0,cet),
     ...     recurdef='RRULE:FREQ=DAILY;INTERVAL=10;COUNT=5')
@@ -140,6 +174,3 @@ Query timerange over mins set
     >>> res = cat(**query)
     >>> sorted([brain.id for brain in res])
     ['mins']
-
-
-    >>> # interact( locals() )
