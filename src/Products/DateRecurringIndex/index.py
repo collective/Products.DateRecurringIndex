@@ -19,9 +19,9 @@ from plone.event.recurrence import (
     recurrence_sequence_ical,
     recurrence_sequence_timedelta
 )
+from zope.interface import implements
 from zope.interface import Interface
 from zope.schema import Text
-from zope.interface import implements
 
 logger = logging.getLogger('Products.DateRecurringIndex')
 

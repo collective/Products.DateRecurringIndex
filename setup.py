@@ -36,12 +36,15 @@ setup(name='Products.DateRecurringIndex',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          # -*- Extra requirements: -*-
+          'ZODB3',
+          'Zope2',
           'plone.event',
-          # Zope 2 dependencies are missing
+          'zope.interface',
+          'zope.schema',
       ],
       extras_require={'test': [#'interlude',
                                'pytz']},
       entry_points={'console_scripts':
                     ['bench_dri = Products.DateRecurringIndex.bench:run']},
 )
-
