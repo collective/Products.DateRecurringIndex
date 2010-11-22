@@ -182,7 +182,7 @@ class DateRecurringIndex(UnIndex):
 
         operator = record.get( 'operator', self.useOperator )
         if not operator in self.operators:
-            raise RuntimeError, "operator not valid: %s" % operator
+            raise RuntimeError("operator not valid: %s" % operator)
 
         # depending on the operator we use intersection or union
         if operator == "or":
