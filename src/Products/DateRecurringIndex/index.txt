@@ -11,7 +11,6 @@ Overall tests
 iCalendar Recurrence Mode
 =========================
 
-
 Initialize the catalog with DateRecurringIndex
 
     >>> from Products.DateRecurringIndex.index import DateRecurringIndex
@@ -22,7 +21,7 @@ Initialize the catalog with DateRecurringIndex
 
     >>> from Products.ZCatalog.Catalog import Catalog
     >>> self.app.catalog = Catalog()
-    >>> self.app.catalog.addIndex('recur_ical', dri)
+    >>> self.app.catalog.addIndex('recurr', dri)
     >>> self.app.catalog.addColumn('id')
 
 Let's define some dummy events and catalog them.
