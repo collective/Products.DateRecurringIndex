@@ -19,6 +19,8 @@ Initialize the catalog with DateRecurringIndex
     ...     extra=DummyExtras(recurrence_type='ical', start='start',
     ...                       recurdef='recurdef', until='until', dst='adjust'))
 
+
+Index must have be the same name as dri's id
     >>> from Products.ZCatalog.Catalog import Catalog
     >>> self.app.catalog = Catalog()
     >>> self.app.catalog.addIndex('recurr', dri)
@@ -119,7 +121,7 @@ Query min one specific date
 
     >>> cat = self.app.catalog
     >>> query = {
-    ...     'recurr': {
+    ...     'recur_ical': {
     ...         'query': datetime(2010,10,10,00,00,00,0,cet),
     ...         'range': 'min',
     ...     },
