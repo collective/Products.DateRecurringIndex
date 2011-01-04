@@ -41,12 +41,6 @@
 		<em>Attribute- or fieldname of date until.</em> mandatory
 	</div>
 
-	<div class="form-label">
-	    <label for="dst">dst</label>
-	    <input id="dst" type="text" name="extra.dst:record" />
-		<em>Daylight saving border behaviour (adjust|keep|auto).</em> mandatory
-	</div>
-
     <div class="form-optional">
     This index has the type of DateRecurringIndex
 	</div>

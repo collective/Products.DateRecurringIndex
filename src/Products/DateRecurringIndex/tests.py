@@ -1,10 +1,7 @@
 import unittest
 import doctest
-#from interlude import interact
+from interlude import interact
 from Testing import ZopeTestCase as ztc
-
-from Products.ZCatalog.Catalog import Catalog
-from Products.DateRecurringIndex.index import DateRecurringIndex
 
 optionflags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 
@@ -18,12 +15,11 @@ class DummyEvent(object):
 
 class DummyExtras(object):
     def __init__(self, recurrence_type=None,
-                 start=None, recurdef=None, until=None, dst=None):
+                 start=None, recurdef=None, until=None):
         self.recurrence_type = recurrence_type
         self.start = start
         self.recurdef = recurdef
         self.until = until
-        self.dst = dst
 
 class DRITestcase(ztc.ZopeTestCase):
     """Base TestCase for DateRecurringIndex."""
@@ -34,7 +30,7 @@ class DRITestcase(ztc.ZopeTestCase):
         return ids
 
 
-TESTFILES = ['index.txt', 'index_timedelta.txt',]
+TESTFILES = ['index.txt',]
 
 
 def test_suite():
@@ -43,7 +39,7 @@ def test_suite():
         ztc.ZopeDocFileSuite(
             filename,
             optionflags=optionflags,
-            globs={#'interact': interact,
+            globs={'interact': interact,
                 },
             test_class=DRITestcase
         ) for filename in TESTFILES])

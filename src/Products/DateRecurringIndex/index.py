@@ -13,11 +13,9 @@ from Products.PluginIndexes.common import safe_callable
 from Products.PluginIndexes.common.util import parseIndexRequest
 from Products.PluginIndexes.common.UnIndex import UnIndex
 from plone.event.utils import dt2int, pydt
-from plone.event.utils import DSTADJUST, DSTAUTO, DSTKEEP
 from plone.event.recurrence import (
     recurrence_int_sequence,
-    recurrence_sequence_ical,
-    recurrence_sequence_timedelta
+    recurrence_sequence_ical
 )
 from zope.interface import implements
 from zope.interface import Interface
@@ -34,7 +32,6 @@ class IDateRecurringIndex(Interface):
     attr_start = Text(title=u'Attribute- or fieldname of date start.')
     attr_recurdef = Text(title=u'Attribute- or fieldname of recurrence rule definition. RFC2445 compatible string or timedelta.')
     attr_until = Text(title=u'Attribute- or fieldname of date until.')
-    dst = Text(title=u'Daylight saving border behaviour (adjust|keep|auto).')
 
 
 class DateRecurringIndex(UnIndex):
@@ -63,7 +60,6 @@ class DateRecurringIndex(UnIndex):
         @ param extra.start:
         @ param extra.recurdef:
         @ param extral.until:
-        @ param extral.dst:
         """
         UnIndex.__init__(self, id, ignore_ex=None, call_methods=None,
                          extra=None, caller=None)
@@ -71,9 +67,6 @@ class DateRecurringIndex(UnIndex):
         self.attr_start = extra.start
         self.attr_recurdef = extra.recurdef
         self.attr_until = extra.until
-        assert(extra.dst in [DSTADJUST, DSTKEEP, DSTAUTO])
-        self.dst = extra.dst
-
 
     def index_object(self, documentId, obj, threshold=None):
         """index an object, normalizing the indexed value to an integer
@@ -85,9 +78,6 @@ class DateRecurringIndex(UnIndex):
 
            o Repeat by recurdef - wether a timedelta or a RFC2445 reccurence
              definition string
-
-           o Daylight Saving Time (dst) handling. see plone.event.recurrence.
-             Wether DSTAUTO, DSTADJUST or DSTKEEP.
 
         """
         returnStatus = 0
@@ -108,14 +98,7 @@ class DateRecurringIndex(UnIndex):
         if safe_callable(recurdef):
             recurdef = recurdef()
 
-        if self.recurrence_type == "ical":
-            dates = recurrence_sequence_ical(start, recurdef, until,
-                                             dst=self.dst)
-        else:
-            if not isinstance(recurdef, int):
-                recurdef = None
-            dates = recurrence_sequence_timedelta(start, recurdef, until,
-                                                  dst=self.dst)
+        dates = recurrence_sequence_ical(start, recurdef, until)
 
         newvalues = IISet(recurrence_int_sequence(dates))
         oldvalues = self._unindex.get(documentId, _marker)
@@ -258,10 +241,6 @@ class DateRecurringIndex(UnIndex):
     security.declareProtected(VIEW_PERMISSION, 'getUntilAttribute')
     def getUntilAttribute(self):
         return self.attr_until
-
-    security.declareProtected(VIEW_PERMISSION, 'getDSTBehaviour')
-    def getDSTBehaviour(self):
-        return self.dst
 
 
 manage_addDRIndexForm = DTMLFile( 'www/addDRIndex', globals() )

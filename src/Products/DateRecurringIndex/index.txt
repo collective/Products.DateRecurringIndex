@@ -17,7 +17,7 @@ Initialize the catalog with DateRecurringIndex
     >>> from Products.DateRecurringIndex.tests import DummyExtras
     >>> dri = DateRecurringIndex('recurr',
     ...     extra=DummyExtras(recurrence_type='ical', start='start',
-    ...                       recurdef='recurdef', until='until', dst='adjust'))
+    ...                       recurdef='recurdef', until='until'))
 
 
 Index must have be the same name as dri's id
@@ -66,12 +66,12 @@ Index the same event more than once and test if index size changes.
 
 
 Index for querying later on...
-    >>> nonr = DummyEvent(id='nonr', start=datetime(2010,10,10,00,00,00,0,cet))
-    >>> days = DummyEvent(id='days', start=datetime(2010,10,10,00,00,00,0,cet),
+    >>> nonr = DummyEvent(id='nonr', start=datetime(2010,10,10,0,0,0,0,cet))
+    >>> days = DummyEvent(id='days', start=datetime(2010,10,10,0,0,0,0,cet),
     ...     recurdef='RRULE:FREQ=DAILY;INTERVAL=10;COUNT=5')
-    >>> mins = DummyEvent(id='mins', start=datetime(2010,10,10,00,00,00,0,cet),
+    >>> mins = DummyEvent(id='mins', start=datetime(2010,10,10,0,0,0,0,cet),
     ...     recurdef='RRULE:FREQ=MINUTELY;INTERVAL=10;COUNT=5')
-    >>> dstc = DummyEvent(id='dstc', start=datetime(2010,10,30,23,00,00,0,cet),
+    >>> dstc = DummyEvent(id='dstc', start=datetime(2010,10,20,0,0,0,0,cet),
     ...     recurdef='RRULE:FREQ=HOURLY;INTERVAL=1;COUNT=7')
 
 
@@ -106,15 +106,13 @@ These are the dates indexed:
         datetime.datetime(2010, 10, 10, 0, 40, tzinfo=<DstTzInfo 'CET' CEST+2:00:00 DST>)]
 
     >>> list(recurrence_sequence_ical(start=dstc.start, recrule=dstc.recurdef))
-    [datetime.datetime(2010, 10, 30, 23, 0, tzinfo=<DstTzInfo 'CET' CEST+2:00:00 DST>),
-        datetime.datetime(2010, 10, 31, 0, 0, tzinfo=<DstTzInfo 'CET' CEST+2:00:00 DST>),
-        datetime.datetime(2010, 10, 31, 1, 0, tzinfo=<DstTzInfo 'CET' CEST+2:00:00 DST>),
-        datetime.datetime(2010, 10, 31, 2, 0, tzinfo=<DstTzInfo 'CET' CEST+2:00:00 DST>),
-        datetime.datetime(2010, 10, 31, 2, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2010, 10, 31, 3, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>),
-        datetime.datetime(2010, 10, 31, 4, 0, tzinfo=<DstTzInfo 'CET' CET+1:00:00 STD>)]
-
-
+    [datetime.datetime(2010, 10, 20, 0, 0, tzinfo=<DstTzInfo 'CET' CEST+2:00:00 DST>),
+        datetime.datetime(2010, 10, 20, 1, 0, tzinfo=<DstTzInfo 'CET' CEST+2:00:00 DST>),
+        datetime.datetime(2010, 10, 20, 2, 0, tzinfo=<DstTzInfo 'CET' CEST+2:00:00 DST>),
+        datetime.datetime(2010, 10, 20, 3, 0, tzinfo=<DstTzInfo 'CET' CEST+2:00:00 DST>),
+        datetime.datetime(2010, 10, 20, 4, 0, tzinfo=<DstTzInfo 'CET' CEST+2:00:00 DST>),
+        datetime.datetime(2010, 10, 20, 5, 0, tzinfo=<DstTzInfo 'CET' CEST+2:00:00 DST>),
+        datetime.datetime(2010, 10, 20, 6, 0, tzinfo=<DstTzInfo 'CET' CEST+2:00:00 DST>)]
 
 Query min one specific date
 ---------------------------

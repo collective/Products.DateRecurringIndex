@@ -9,7 +9,5 @@
     <span tal:replace="context/getRecurDefAttribute" /></p>
 <p class="form-help">attribute- or fieldname of date until:
     <span tal:replace="context/getUntilAttribute" /></p>
-<p class="form-help">daylight saving time (dst) behaviour:
-    <span tal:replace="context/getDSTBehaviour" /></p>
 
 <h1 tal:replace="structure context/manage_page_footer">FOOTER</h1>
