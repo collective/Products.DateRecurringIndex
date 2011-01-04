@@ -43,7 +43,7 @@ setup(name='Products.DateRecurringIndex',
           'zope.interface',
           'zope.schema',
       ],
-      extras_require={'test': [#'interlude',
+      extras_require={'test': ['interlude',
                                'pytz']},
       entry_points={'console_scripts':
                     ['bench_dri = Products.DateRecurringIndex.bench:run']},
