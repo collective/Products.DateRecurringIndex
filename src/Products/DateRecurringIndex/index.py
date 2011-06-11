@@ -88,6 +88,13 @@ class DateRecurringIndex(UnIndex):
         """
         returnStatus = 0
 
+        try:
+            date_attr = getattr( obj, self.id )
+            if safe_callable( date_attr ):
+                date_attr = date_attr()
+        except AttributeError:
+            return returnStatus
+
         until = getattr(obj, self.attr_until, None)
         if safe_callable(until):
             until = until()
@@ -96,17 +103,8 @@ class DateRecurringIndex(UnIndex):
         if safe_callable(recurdef):
             recurdef = recurdef()
 
-        try:
-            date_attr = getattr( obj, self.id )
-            if safe_callable( date_attr ):
-                date_attr = date_attr()
-
-            newvalues = IISet(recurrence_int_sequence(
-                recurrence_sequence_ical(date_attr, recurdef, until)
-                ))
-        except AttributeError:
-            newvalues = _marker
-
+        dates = recurrence_sequence_ical(date_attr, recurdef, until)
+        newvalues = IISet(recurrence_int_sequence(dates))
         oldvalues = self._unindex.get( documentId, _marker )
 
         if oldvalues is not _marker and newvalues is not _marker\
