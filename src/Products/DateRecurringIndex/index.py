@@ -2,7 +2,6 @@
 # BSD derivative License
 
 import logging
-from AccessControl import ClassSecurityInfo
 from App.special_dtml import DTMLFile
 from App.class_init import InitializeClass
 from BTrees.IIBTree import IISet
@@ -23,15 +22,14 @@ from zope.schema import Text
 
 logger = logging.getLogger('Products.DateRecurringIndex')
 
-VIEW_PERMISSION = 'View'
 _marker = object()
 
 
 class IDateRecurringIndex(Interface):
     recurrence_type = Text(title=u'Recurrence type (ical|timedelta).')
-    attr_start = Text(title=u'Attribute- or fieldname of date start.')
+    attr_start = Text(title=u'Attribute- or fieldname of start date.')
     attr_recurdef = Text(title=u'Attribute- or fieldname of recurrence rule definition. RFC2445 compatible string or timedelta.')
-    attr_until = Text(title=u'Attribute- or fieldname of date until.')
+    attr_until = Text(title=u'Attribute- or fieldname of until date (optional).')
 
 
 class DateRecurringIndex(UnIndex):
@@ -40,7 +38,6 @@ class DateRecurringIndex(UnIndex):
     implements(IDateRecurringIndex)
 
     meta_type="DateRecurringIndex"
-    security = ClassSecurityInfo()
     query_options = ('query', 'range')
 
     manage_options= (
@@ -224,23 +221,6 @@ class DateRecurringIndex(UnIndex):
             return IISet(), (self.id,)
         else:
             return result, (self.id,)
-
-
-    security.declareProtected(VIEW_PERMISSION, 'getRecurrenceType')
-    def getRecurrenceType(self):
-        return self.recurrence_type
-
-    security.declareProtected(VIEW_PERMISSION, 'getStartAttribute')
-    def getStartAttribute(self):
-        return self.attr_start
-
-    security.declareProtected(VIEW_PERMISSION, 'getRecurDefAttribute')
-    def getRecurDefAttribute(self):
-        return self.attr_recurdef
-
-    security.declareProtected(VIEW_PERMISSION, 'getUntilAttribute')
-    def getUntilAttribute(self):
-        return self.attr_until
 
 
 manage_addDRIndexForm = DTMLFile( 'www/addDRIndex', globals() )

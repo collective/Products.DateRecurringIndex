@@ -1,13 +1,16 @@
 <h1 tal:replace="structure context/manage_page_header">HEADER</h1>
 <h1 tal:replace="structure context/manage_tabs">TABS</h1>
 
-<p class="form-help">recurrence sequence calculation type:
-    <span tal:replace="context/getRecurrenceType" /></p>
-<p class="form-help">attribute- or fieldname of date start:
-    <span tal:replace="context/getStartAttribute" /></p>
-<p class="form-help">attribute- or fieldname of recurrence rule definition as delta in minutes or dateutil.rrule:
-    <span tal:replace="context/getRecurDefAttribute" /></p>
-<p class="form-help">attribute- or fieldname of date until:
-    <span tal:replace="context/getUntilAttribute" /></p>
+    <span tal:replace="context/numObjects" /></p>
+<p class="form-help">Distinct values:
+    <span tal:replace="context/indexSize" /></p>
+<p class="form-help">Recurrence sequence calculation type:
+    <span tal:replace="context/recurrence_type" /></p>
+<p class="form-help">Attribute- or fieldname of start date:
+    <span tal:replace="context/attr_start" /></p>
+<p class="form-help">Attribute- or fieldname of recurrence rule definition (RFC2445 recurrence rule string or delta/integer in minutes):
+    <span tal:replace="context/attr_recurdef" /></p>
+<p class="form-help">Attribute- or fieldname of until date (optional):
+    <span tal:replace="context/attr_until" /></p>
 
 <h1 tal:replace="structure context/manage_page_footer">FOOTER</h1>
