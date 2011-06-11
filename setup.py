@@ -45,6 +45,6 @@ setup(name='Products.DateRecurringIndex',
       ],
       extras_require={'test': ['interlude',
                                'pytz']},
-      entry_points={'console_scripts':
-                    ['bench_dri = Products.DateRecurringIndex.bench:run']},
+      entry_points={'plone.recipe.zope2instance.ctl':
+                    ['benchmark_DateRecurringIndex_vs_DateIndex = Products.DateRecurringIndex.benchmark:run']},
 )
