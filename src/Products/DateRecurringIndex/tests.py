@@ -15,9 +15,8 @@ class DummyEvent(object):
 
 class DummyExtras(object):
     def __init__(self, recurrence_type=None,
-                 start=None, recurdef=None, until=None):
+                 recurdef=None, until=None):
         self.recurrence_type = recurrence_type
-        self.start = start
         self.recurdef = recurdef
         self.until = until
 

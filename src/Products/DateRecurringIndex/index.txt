@@ -23,7 +23,7 @@ Initialize the catalog with DateRecurringIndex
 Index must have be the same name as dri's id
     >>> from Products.ZCatalog.Catalog import Catalog
     >>> self.app.catalog = Catalog()
-    >>> self.app.catalog.addIndex('recurr', dri)
+    >>> self.app.catalog.addIndex('start', dri)
     >>> self.app.catalog.addColumn('id')
 
 Let's define some dummy events and catalog them.
@@ -134,7 +134,7 @@ Query max one specific date
 
     >>> cat = self.app.catalog
     >>> query = {
-    ...     'recurr': {
+    ...     'start': {
     ...         'query': datetime(2010,10,10,00,00,00,0,cet),
     ...         'range': 'max',
     ...     },
@@ -149,7 +149,7 @@ Query timerange over days and dstc set
 --------------------------------------
 
     >>> query = {
-    ...     'recurr': {
+    ...     'start': {
     ...         'query': [datetime(2010,10,11,00,00,00,0,cet),
     ...                   datetime(2010,11,20,00,00,00,0,cet)],
     ...         'range': 'min:max',
@@ -164,7 +164,7 @@ Query timerange over mins set
 -----------------------------
 
     >>> query = {
-    ...     'recurr': {
+    ...     'start': {
     ...         'query': [datetime(2010,10,10,00,10,00,0,cet),
     ...                   datetime(2010,10,10,00,40,00,0,cet)],
     ...         'range': 'min:max',

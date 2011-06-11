@@ -56,11 +56,11 @@ class DateRecurringIndex(UnIndex):
                        },
                      )
 
-    def clear( self ):
-        """ Complete reset """
-        self._index = IOBTree()
-        self._unindex = IIBTree()
-        self._length = Length()
+    #def clear( self ):
+    #    """ Complete reset """
+    #    self._index = IOBTree()
+    #    self._unindex = IIBTree()
+    #    self._length = Length()
 
 
     def __init__(self, id, ignore_ex=None, call_methods=None,
@@ -138,7 +138,6 @@ class DateRecurringIndex(UnIndex):
                 self.insertForwardIndexEntry( value, documentId )
                 inserted = True
             if inserted:
-                import pdb;pdb.set_trace()
                 self._unindex[documentId] = IISet(newvalues) # TODO: IISet necessary here?
                 returnStatus = 1
 
