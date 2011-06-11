@@ -35,11 +35,10 @@ class BenchTestRunner(unittest.TextTestRunner):
 
 
 class Dummy(object):
-    """Some dummy with a start, delta and until attributes to index."""
+    """Some dummy with recurdef and until attributes to index."""
 
-    def __init__(self, id, start, recurdef, until, recurrence_type):
+    def __init__(self, id, recurdef, until, recurrence_type):
         self.id = id
-        self.start = start
         self.recurdef = recurdef
         self.until = until
         self.recurrence_type = recurrence_type
@@ -62,9 +61,9 @@ class BenchTestCase(ztc.ZopeTestCase):
         from Products.DateRecurringIndex.index import DateRecurringIndex
         self.di = DateIndex('di')
         self.dri_timedelta = DateRecurringIndex('dri',
-                extra=Dummy(None, 'start', 'delta', 'until', 'timedelta'))
+                extra=Dummy('start', 'delta', 'until', 'timedelta'))
         self.dri_ical = DateRecurringIndex('dri',
-                extra=Dummy(None, 'start', 'delta', 'until', 'ical'))
+                extra=Dummy('start', 'delta', 'until', 'ical'))
 
         # Creates 365 items to be indexed
         self.items = []
