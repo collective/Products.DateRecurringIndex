@@ -15,9 +15,9 @@ Initialize the catalog with DateRecurringIndex
 
     >>> from Products.DateRecurringIndex.index import DateRecurringIndex
     >>> from Products.DateRecurringIndex.tests import DummyExtras
-    >>> dri = DateRecurringIndex('recurr',
-    ...     extra=DummyExtras(recurrence_type='ical', start='start',
-    ...                       recurdef='recurdef', until='until'))
+    >>> dri = DateRecurringIndex('start',
+    ...     extra=DummyExtras(recurrence_type='ical', recurdef='recurdef', 
+    ...                       until='until'))
 
 
 Index must have be the same name as dri's id

@@ -2,6 +2,7 @@
 # BSD derivative License
 
 from logging import getLogger
+from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from BTrees.IIBTree import IIBTree
 from BTrees.IIBTree import IISet
@@ -90,6 +91,14 @@ class DateRecurringIndex(UnIndex):
         """
         returnStatus = 0
 
+        until = getattr(obj, self.attr_until, None)
+        if safe_callable(until):
+            until = until()
+
+        recurdef = getattr(obj, self.attr_recurdef, None)
+        if safe_callable(recurdef):
+            recurdef = recurdef()
+
         try:
             date_attr = getattr( obj, self.id )
             if safe_callable( date_attr ):
@@ -99,15 +108,7 @@ class DateRecurringIndex(UnIndex):
                 recurrence_sequence_ical(date_attr, recurdef, until)
                 ))
         except AttributeError:
-			newvalues = _marker
-
-        until = getattr(obj, self.attr_until, None)
-        if safe_callable(until):
-            until = until()
-
-        recurdef = getattr(obj, self.attr_recurdef, None)
-        if safe_callable(recurdef):
-            recurdef = recurdef()
+            newvalues = _marker
 
         oldvalues = self._unindex.get( documentId, _marker )
 
@@ -137,6 +138,7 @@ class DateRecurringIndex(UnIndex):
                 self.insertForwardIndexEntry( value, documentId )
                 inserted = True
             if inserted:
+                import pdb;pdb.set_trace()
                 self._unindex[documentId] = IISet(newvalues) # TODO: IISet necessary here?
                 returnStatus = 1
 
@@ -242,7 +244,9 @@ class DateRecurringIndex(UnIndex):
 manage_addDRIndexForm = DTMLFile( 'www/addDRIndex', globals() )
 
 def manage_addDRIndex( self, id, extra=None, REQUEST=None, RESPONSE=None,
-					   URL3=None):
+                       URL3=None):
     """Add a DateRecurringIndex"""
     return self.manage_addIndex(id, 'DateRecurringIndex', extra=extra, \
                     REQUEST=REQUEST, RESPONSE=RESPONSE, URL1=URL3)
+
+InitializeClass(DateRecurringIndex)
