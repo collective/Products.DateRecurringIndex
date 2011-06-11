@@ -1,6 +1,3 @@
-# Copyright 2008-2009, BlueDynamics Alliance, Austria - http://bluedynamics.com
-# BSD derivative License
-
 from logging import getLogger
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
