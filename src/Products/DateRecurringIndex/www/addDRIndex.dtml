@@ -24,12 +24,6 @@
 	</div>
 
 	<div class="form-label">
-	    <label for="start">start</label>
-	    <input id="start" type="text" name="extra.start:record" />
-		<em>Attribute- or fieldname of date start.</em> mandatory
-	</div>
-
-	<div class="form-label">
 	    <label for="recurdef">recurdef</label>
 	    <input id="recurdef" type="text" name="extra.recurdef:record" />
 		<em>Attribute- or fieldname of recurrence rule definition. RFC2445 compatible string or timedelta.</em> mandatory

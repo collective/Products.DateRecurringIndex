@@ -3,8 +3,11 @@
 
 from logging import getLogger
 from App.special_dtml import DTMLFile
+from BTrees.IIBTree import IIBTree
 from BTrees.IIBTree import IISet
 from BTrees.IIBTree import union, multiunion, intersection, difference
+from BTrees.IOBTree import IOBTree
+from BTrees.Length import Length
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from plone.event.utils import dt2int, pydt
 from plone.event.recurrence import (
@@ -42,7 +45,8 @@ class DateRecurringIndex(UnIndex):
     manage = manage_main = PageTemplateFile('www/manageDRIndex', globals())
     manage_browse = DTMLFile('../dtml/browseIndex', globals())
 
-    manage_main._setName( 'manage_main' )
+    # TODO: for that, this has to be a DTMLFile?
+    #manage_main._setName( 'manage_main' )
     manage_options = ( { 'label' : 'Settings'
                        , 'action' : 'manage_main'
                        },
@@ -107,32 +111,34 @@ class DateRecurringIndex(UnIndex):
 
         oldvalues = self._unindex.get( documentId, _marker )
 
-        if difference(newvalues, oldvalues) and\
-                difference(oldvalues, newvalues):
+        if oldvalues is not _marker and newvalues is not _marker\
+            and not difference(newvalues, oldvalues)\
+            and not difference(oldvalues, newvalues):
             # difference is calculated relative to first argument, so we have to
             # use it twice here
+            return returnStatus
 
-            if oldvalues is not _marker:
-                for oldvalue in oldvalues:
-                    self.removeForwardIndexEntry(oldvalue, documentId)
-                if newvalues is _marker:
-                    try:
-                        del self._unindex[documentId]
-                    except ConflictError:
-                        raise
-                    except:
-                        LOG.error("Should not happen: oldvalues was there,"
-                                     " now it's not, for document with id %s" %
-                                       documentId)
+        if oldvalues is not _marker:
+            for oldvalue in oldvalues:
+                self.removeForwardIndexEntry(oldvalue, documentId)
+            if newvalues is _marker:
+                try:
+                    del self._unindex[documentId]
+                except ConflictError:
+                    raise
+                except:
+                    LOG.error("Should not happen: oldvalues was there,"
+                                 " now it's not, for document with id %s" %
+                                   documentId)
 
-            if newvalues is not _marker:
-                inserted = False
-                for value in newvalues:
-                    self.insertForwardIndexEntry( value, documentId )
-                    inserted = True
-                if inserted:
-                    self._unindex[documentId] = IISet(newvalues) # TODO: IISet necessary here?
-                    returnStatus = 1
+        if newvalues is not _marker:
+            inserted = False
+            for value in newvalues:
+                self.insertForwardIndexEntry( value, documentId )
+                inserted = True
+            if inserted:
+                self._unindex[documentId] = IISet(newvalues) # TODO: IISet necessary here?
+                returnStatus = 1
 
         return returnStatus
 
