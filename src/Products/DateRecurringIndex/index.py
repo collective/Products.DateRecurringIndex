@@ -87,10 +87,6 @@ class DateRecurringIndex(UnIndex):
         except AttributeError:
             return returnStatus
 
-        until = getattr(obj, self.attr_until, None)
-        if safe_callable(until):
-            until = until()
-
         recurdef = getattr(obj, self.attr_recurdef, None)
         if safe_callable(recurdef):
             recurdef = recurdef()
@@ -98,6 +94,10 @@ class DateRecurringIndex(UnIndex):
         if not recurdef:
             dates = [date_attr]
         else:
+            until = getattr(obj, self.attr_until, None)
+            if safe_callable(until):
+                until = until()
+
             dates = recurrence_sequence_ical(date_attr, recrule=recurdef, until=until)
 
         newvalues = IISet(map(dt2int, dates))
