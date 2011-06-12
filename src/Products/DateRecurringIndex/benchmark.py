@@ -37,8 +37,10 @@ class BenchTestRunner(unittest.TextTestRunner):
 class Dummy(object):
     """Some dummy with recurdef and until attributes to index."""
 
-    def __init__(self, id, recurdef, until, recurrence_type):
+    def __init__(self, id=None, start=None, recurdef=None, until=None,
+            recurrence_type=None):
         self.id = id
+        self.start = start
         self.recurdef = recurdef
         self.until = until
         self.recurrence_type = recurrence_type
@@ -59,18 +61,20 @@ class BenchTestCase(ztc.ZopeTestCase):
         # Create indexes
         from Products.PluginIndexes.DateIndex.DateIndex import DateIndex
         from Products.DateRecurringIndex.index import DateRecurringIndex
-        self.di = DateIndex('di')
-        self.dri_timedelta = DateRecurringIndex('dri',
-                extra=Dummy('start', 'delta', 'until', 'timedelta'))
-        self.dri_ical = DateRecurringIndex('dri',
-                extra=Dummy('start', 'delta', 'until', 'ical'))
+        self.di = DateIndex('start')
+        self.dri_timedelta = DateRecurringIndex('start',
+                extra=Dummy(recurdef='recurdef', until='until', recurrence_type='timedelta'))
+        self.dri_ical = DateRecurringIndex('start',
+                extra=Dummy(recurdef='recurdef', until='until', recurrence_type='ical'))
 
         # Creates 365 items to be indexed
         self.items = []
         tz = pytz.timezone('CET')
         for month, days in enumerate(calendar.mdays):
             for day in range(days):
-                self.items.append(datetime(2010,month,day+1,0,0,0,0,tz))
+                self.items.append(
+                        Dummy(start=datetime(2010,month,day+1,0,0,0,0,tz))
+                    )
 
     def _run_over_items(self, function, total, name):
         n = 0
