@@ -4,8 +4,6 @@
     <span tal:replace="context/numObjects" /></p>
 <p class="form-help">Distinct values:
     <span tal:replace="context/indexSize" /></p>
-<p class="form-help">Recurrence sequence calculation type:
-    <span tal:replace="context/recurrence_type" /></p>
 <p class="form-help">Attribute- or fieldname of recurrence rule definition (RFC2445 recurrence rule string or delta/integer in minutes):
     <span tal:replace="context/attr_recurdef" /></p>
 <p class="form-help">Attribute- or fieldname of until date (optional):

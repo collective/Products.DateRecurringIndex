@@ -26,7 +26,6 @@ _marker = object()
 
 
 class IDateRecurringIndex(Interface):
-    recurrence_type = Text(title=u'Recurrence type (ical|timedelta).')
     attr_recurdef = Text(title=u'Attribute- or fieldname of recurrence rule definition. RFC2445 compatible string or timedelta.')
     attr_until = Text(title=u'Attribute- or fieldname of until date (optional).')
 
@@ -41,7 +40,7 @@ class DateRecurringIndex(UnIndex):
     query_options = ('query', 'range')
 
     manage = manage_main = PageTemplateFile('www/manageDRIndex', globals())
-    manage_browse = DTMLFile('../dtml/browseIndex', globals())
+    manage_browse = DTMLFile('www/browseIndex', globals())
 
     # TODO: for that, this has to be a DTMLFile?
     #manage_main._setName( 'manage_main' )
@@ -63,14 +62,11 @@ class DateRecurringIndex(UnIndex):
     def __init__(self, id, ignore_ex=None, call_methods=None,
                  extra=None, caller=None):
         """ Initialize the index
-        @ param extra.recurrence_type:
-        @ param extra.start:
         @ param extra.recurdef:
         @ param extral.until:
         """
         UnIndex.__init__(self, id, ignore_ex=None, call_methods=None,
                          extra=None, caller=None)
-        self.recurrence_type = extra.recurrence_type
         self.attr_recurdef = extra.recurdef
         self.attr_until = extra.until
 
@@ -105,8 +101,6 @@ class DateRecurringIndex(UnIndex):
 
         if not recurdef:
             dates = [date_attr]
-        elif self.recurrence_type == 'timedelta':
-            dates = recurrence_sequence_timedelta(date_attr, delta=recurdef, until=until)
         else:
             dates = recurrence_sequence_ical(date_attr, recrule=recurdef, until=until)
 

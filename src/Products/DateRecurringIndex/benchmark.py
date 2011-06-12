@@ -41,15 +41,11 @@ class Dummy(object):
     """Some dummy with recurdef and until attributes to index."""
 
     def __init__(self, id=None, start=None, recurdef=None, until=None,
-            recurrence_type=None,
-            recurdef_ical=None, recurdef_timedelta=None, recurdef_dummy=None):
+            recurdef_dummy=None):
         self.id = id
         self.start = start
         self.recurdef = recurdef
         self.until = until
-        self.recurrence_type = recurrence_type
-        self.recurdef_ical = recurdef_ical
-        self.recurdef_timedelta = recurdef_timedelta
         self.recurdef_dummy = recurdef_dummy
 
 
@@ -70,11 +66,9 @@ class BenchTestCase(ztc.ZopeTestCase):
         from Products.DateRecurringIndex.index import DateRecurringIndex
         self.di = DateIndex('start')
         self.dri_norecur = DateRecurringIndex('start',
-                extra=Dummy(recurdef='recurdef_dummy', until='until', recurrence_type='ical'))
-        self.dri_timedelta = DateRecurringIndex('start',
-                extra=Dummy(recurdef='recurdef_timedelta', until='until', recurrence_type='timedelta'))
-        self.dri_ical = DateRecurringIndex('start',
-                extra=Dummy(recurdef='recurdef_ical', until='until', recurrence_type='ical'))
+                extra=Dummy(recurdef='recurdef_dummy', until='until'))
+        self.dri = DateRecurringIndex('start',
+                extra=Dummy(recurdef='recurdef', until='until'))
 
         # Creates 365 items to be indexed
         self.items = []
@@ -84,8 +78,7 @@ class BenchTestCase(ztc.ZopeTestCase):
                 self.items.append(
                         Dummy(start=datetime(2010,month,day+1,0,0,0,0,tz),
                             until=datetime(2010,month,day+1,0,0,0,0,tz)+timedelta(days=1),
-                            recurdef_ical="RRULE:FREQ=HOURLY;INTERVAL=8",
-                            recurdef_timedelta=480)
+                            recurdef="RRULE:FREQ=HOURLY;INTERVAL=8")
                     )
 
     def _run_over_items(self, function, total, name):
@@ -112,18 +105,11 @@ class BenchTestCase(ztc.ZopeTestCase):
                 'benchDateRecurringIndex_norecur',
                 )
 
-    def benchDateRecurringIndex_timedelta(self, total=TOTAL):
+    def benchDateRecurringIndex(self, total=TOTAL):
         self._run_over_items(
-                self.dri_timedelta.index_object,
+                self.dri.index_object,
                 total,
-                'benchDateRecurringIndex_timedelta',
-                )
-
-    def benchDateRecurringIndex_ical(self, total=TOTAL):
-        self._run_over_items(
-                self.dri_ical.index_object,
-                total,
-                'benchDateRecurringIndex_ical',
+                'benchDateRecurringIndex',
                 )
 
 
