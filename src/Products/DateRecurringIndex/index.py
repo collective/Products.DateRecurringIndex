@@ -8,10 +8,7 @@ from BTrees.IOBTree import IOBTree
 from BTrees.Length import Length
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from plone.event.utils import dt2int, pydt
-from plone.event.recurrence import (
-    recurrence_sequence_ical,
-    recurrence_sequence_timedelta
-)
+from plone.event.recurrence import recurrence_sequence_ical
 from ZODB.POSException import ConflictError
 from zope.interface import implements
 from zope.interface import Interface
@@ -78,8 +75,7 @@ class DateRecurringIndex(UnIndex):
            o Objects which have 'None' as indexed value are *omitted*,
              by design.
 
-           o Repeat by recurdef - wether a timedelta or a RFC2445 reccurence
-             definition string
+           o Repeat by recurdef - a RFC2445 reccurence definition string
 
         """
         returnStatus = 0
