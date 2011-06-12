@@ -13,6 +13,8 @@ from Zope2.App import zcml
 from Products.Five import fiveconfigure
 
 
+TOTAL = 100
+
 class _BenchTestResult(unittest._TextTestResult):
     """Custom TestResult class to display the time each method consumed."""
 
@@ -82,8 +84,8 @@ class BenchTestCase(ztc.ZopeTestCase):
                 self.items.append(
                         Dummy(start=datetime(2010,month,day+1,0,0,0,0,tz),
                             until=datetime(2010,month,day+1,0,0,0,0,tz)+timedelta(days=1),
-                            recurdef_ical="RRULE:FREQ=MINUTELY;INTERVAL=60",
-                            recurdef_timedelta=60)
+                            recurdef_ical="RRULE:FREQ=HOURLY;INTERVAL=8",
+                            recurdef_timedelta=480)
                     )
 
     def _run_over_items(self, function, total, name):
@@ -96,28 +98,28 @@ class BenchTestCase(ztc.ZopeTestCase):
     def benchCache(self):
         """Dummy test to cache the self.items list."""
 
-    def benchDateIndex(self, total=1000):
+    def benchDateIndex(self, total=TOTAL):
         self._run_over_items(
                 self.di.index_object,
                 total,
                 'benchDateIndex',
                 )
 
-    def benchDateRecurringIndex_norecur(self, total=1000):
+    def benchDateRecurringIndex_norecur(self, total=TOTAL):
         self._run_over_items(
                 self.dri_norecur.index_object,
                 total,
                 'benchDateRecurringIndex_norecur',
                 )
 
-    def benchDateRecurringIndex_timedelta(self, total=1000):
+    def benchDateRecurringIndex_timedelta(self, total=TOTAL):
         self._run_over_items(
                 self.dri_timedelta.index_object,
                 total,
                 'benchDateRecurringIndex_timedelta',
                 )
 
-    def benchDateRecurringIndex_ical(self, total=1000):
+    def benchDateRecurringIndex_ical(self, total=TOTAL):
         self._run_over_items(
                 self.dri_ical.index_object,
                 total,
