@@ -10,7 +10,8 @@ from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from plone.event.utils import dt2int, pydt
 from plone.event.recurrence import (
     recurrence_int_sequence,
-    recurrence_sequence_ical
+    recurrence_sequence_ical,
+    recurrence_sequence_timedelta
 )
 from ZODB.POSException import ConflictError
 from zope.interface import implements
@@ -103,7 +104,12 @@ class DateRecurringIndex(UnIndex):
         if safe_callable(recurdef):
             recurdef = recurdef()
 
-        dates = recurrence_sequence_ical(date_attr, recurdef, until)
+        if recurdef and self.recurrence_type == 'timedelta':
+            dates = recurrence_sequence_timedelta(date_attr, recurdef, until)
+        elif recurdef:
+            dates = recurrence_sequence_ical(date_attr, recurdef, until)
+        else:
+            dates = [date_attr]
         newvalues = IISet(recurrence_int_sequence(dates))
         oldvalues = self._unindex.get( documentId, _marker )
 
