@@ -9,7 +9,6 @@ from BTrees.Length import Length
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from plone.event.utils import dt2int, pydt
 from plone.event.recurrence import (
-    recurrence_int_sequence,
     recurrence_sequence_ical,
     recurrence_sequence_timedelta
 )
@@ -104,13 +103,14 @@ class DateRecurringIndex(UnIndex):
         if safe_callable(recurdef):
             recurdef = recurdef()
 
-        if recurdef and self.recurrence_type == 'timedelta':
-            dates = recurrence_sequence_timedelta(date_attr, recurdef, until)
-        elif recurdef:
-            dates = recurrence_sequence_ical(date_attr, recurdef, until)
-        else:
+        if not recurdef:
             dates = [date_attr]
-        newvalues = IISet(recurrence_int_sequence(dates))
+        elif self.recurrence_type == 'timedelta':
+            dates = recurrence_sequence_timedelta(date_attr, delta=recurdef, until=until)
+        else:
+            dates = recurrence_sequence_ical(date_attr, recrule=recurdef, until=until)
+
+        newvalues = IISet(map(dt2int, dates))
         oldvalues = self._unindex.get( documentId, _marker )
 
         if oldvalues is not _marker and newvalues is not _marker\
