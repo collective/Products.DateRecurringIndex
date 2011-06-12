@@ -66,12 +66,12 @@ Index the same event more than once and test if index size changes.
 
 
 Index for querying later on...
-    >>> nonr = DummyEvent(id='nonr', start=datetime(2010,10,10,0,0,0,0,cet))
-    >>> days = DummyEvent(id='days', start=datetime(2010,10,10,0,0,0,0,cet),
+    >>> nonr = DummyEvent(id='nonr', start=datetime(2010,10,10,0,0,tzinfo=cet))
+    >>> days = DummyEvent(id='days', start=datetime(2010,10,10,0,0,tzinfo=cet),
     ...     recurdef='RRULE:FREQ=DAILY;INTERVAL=10;COUNT=5')
-    >>> mins = DummyEvent(id='mins', start=datetime(2010,10,10,0,0,0,0,cet),
+    >>> mins = DummyEvent(id='mins', start=datetime(2010,10,10,0,0,tzinfo=cet),
     ...     recurdef='RRULE:FREQ=MINUTELY;INTERVAL=10;COUNT=5')
-    >>> dstc = DummyEvent(id='dstc', start=datetime(2010,10,20,0,0,0,0,cet),
+    >>> dstc = DummyEvent(id='dstc', start=datetime(2010,10,20,0,0,tzinfo=cet),
     ...     recurdef='RRULE:FREQ=HOURLY;INTERVAL=1;COUNT=7')
 
 
@@ -120,7 +120,7 @@ Query min one specific date
     >>> cat = self.app.catalog
     >>> query = {
     ...     'recur_ical': {
-    ...         'query': datetime(2010,10,10,00,00,00,0,cet),
+    ...         'query': datetime(2010,10,10,0,0,tzinfo=cet),
     ...         'range': 'min',
     ...     },
     ... }
@@ -135,7 +135,7 @@ Query max one specific date
     >>> cat = self.app.catalog
     >>> query = {
     ...     'start': {
-    ...         'query': datetime(2010,10,10,00,00,00,0,cet),
+    ...         'query': datetime(2010,10,10,0,0,tzinfo=cet),
     ...         'range': 'max',
     ...     },
     ... }
@@ -150,8 +150,8 @@ Query timerange over days and dstc set
 
     >>> query = {
     ...     'start': {
-    ...         'query': [datetime(2010,10,11,00,00,00,0,cet),
-    ...                   datetime(2010,11,20,00,00,00,0,cet)],
+    ...         'query': [datetime(2010,10,11,0,0,tzinfo=cet),
+    ...                   datetime(2010,11,20,0,0,tzinfo=cet)],
     ...         'range': 'min:max',
     ...     },
     ... }
@@ -165,8 +165,8 @@ Query timerange over mins set
 
     >>> query = {
     ...     'start': {
-    ...         'query': [datetime(2010,10,10,00,10,00,0,cet),
-    ...                   datetime(2010,10,10,00,40,00,0,cet)],
+    ...         'query': [datetime(2010,10,10,0,10,tzinfo=cet),
+    ...                   datetime(2010,10,10,0,40,tzinfo=cet)],
     ...         'range': 'min:max',
     ...     },
     ... }
