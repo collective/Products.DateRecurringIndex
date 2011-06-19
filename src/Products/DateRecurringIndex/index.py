@@ -92,7 +92,7 @@ class DateRecurringIndex(UnIndex):
             recurdef = recurdef()
 
         if not recurdef:
-            dates = [date_attr]
+            dates = [pydt(date_attr)]
         else:
             until = getattr(obj, self.attr_until, None)
             if safe_callable(until):
