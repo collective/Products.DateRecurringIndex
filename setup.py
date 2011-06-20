@@ -39,7 +39,7 @@ setup(name='Products.DateRecurringIndex',
           # -*- Extra requirements: -*-
           'ZODB3',
           'Zope2',
-          'plone.event',
+          'plone.rfc5545',
           'zope.interface',
           'zope.schema',
       ],
