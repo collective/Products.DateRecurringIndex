@@ -1,17 +1,11 @@
 Changelog
 =========
 
-2.0dev (unreleased)
--------------------
+2.0b1 (2012-02-24)
+------------------
 
-- More tests on querying and indexing.
-  [thet]
-
-- Refactoring parts into plone.event.
-  [thet]
-
-- Additional recurrence calculation mode based on RFC2445/iCalendar
-  specification.
+- Refactoring to support recurrence calculations based on icalendar recurrence
+  rules via plone.event.
   [thet]
 
 

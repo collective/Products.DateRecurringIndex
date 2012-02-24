@@ -2,58 +2,26 @@
 Products.DateRecurringIndex
 ===========================
 
-A Zope 2 catalog index with support for indexing of recurring events. It is a
-drop-in replacement for the Zope2 DateIndex and will produce the same results
-for non-recurring dates.
+A Zope 2 catalog index with support for indexing of recurring events, following
+the icalendar standard. It is a drop-in replacement for the Zope2 DateIndex and
+will produce the same results for non-recurring dates.
 
 The DateRecurringIndex accepts following parameters:
 
-recurrence_type
-    Mandatory. The type of recurrence calculation ("ical" or "timedelta").
-    Mode "ical" follows the RFC2445 specification and expects RFC2445 compatible
-    recurrence definition strings from the recurdef attribute.
-    Mode "timedelta" expects an integer from the recurdef attribute which
-    defines the minutes between each occurence. Although the same recurrence
-    rule can be configured in "ical" mode, "timedelta" is faster for such
-    operations.
-
-start
-    Mandatory. The name of the objects attribute, which returns the start date.
+id
+    Required. The name of the field or object attribute to be indexed.
 
 recurdef
-    Mandatory. The name of the objects attribute, which returns the recurrence
-    rule definitions.
+    Required. The name of the object attribute, which returns the icalendar
+    rrule (recurrence rule) string.
 
 until
     Optional. The name of the objects attribute, which returns the date, until
-    the recurrence should happen. In "ical" mode, the recurrence definition can
-    contain an UNTIL component. If not given at all, there is a MAXCOUNT ceiling
-    constant, defined in plone.event.recurrence, which defines the maximum
-    number of occurences.
-
-dst
-    Optional, defaults to DSTAUTO. Defines the "Daylight Saving Time" behavior
-    when a daylight-saving change is in between the recurrence.
-    Mode DSTADJUST: When crossing daylight saving time changes, the start time
-        of the date before DST change will be the same in value as afterwards.
-        It is adjusted relative to UTC. So 8:00 GMT+1 before will also result in
-        8:00 GMT+2 afterwards. This is what humans might expect when recurring
-        rules are defined.
-    Mode DSTKEEP: When crossing daylight saving time changes, the start time of
-        the date before and after DST change will be the same relative to UTC.
-        So, 8:00 GMT+1 before will result in 7:00 GMT+2 afterwards. This
-        behavior might be what machines expect, when recurrence rules are
-        defined.
-    Mode DSTAUTO:
-        If the relative delta between two occurences of a reucurrence sequence
-        is less than a day, DSTKEEP will be used - otherwise DSTADJUST. This
-        behavior is the default.
-
-
-Dependencies
-============
-
-This package is dependent on plone.event for recurrence calculations.
+    the recurrence should happen. The recurrence definition can also contain an
+    UNTIL component. If both are defined, the recurrence calculation stops 
+    whenever the first until-date is met. If not given at all, there is a
+    MAXCOUNT ceiling constant, defined in plone.event.recurrence, which defines
+    the maximum number of occurences.
 
 
 Datetime.DateTime vs. datetime.datetime
@@ -79,12 +47,11 @@ differ and is not always at the the time.
 Authors
 =======
 
-* Jens Klein <jens@bluedynamics.com> - Original implementation based on
-  timedelta.
+* Jens Klein <jens@bluedynamics.com> - Original implementation.
 
-* Johannes Raggam <johannes@raggam.co.at> - Datetuil RFC2445 compatible
-  recurrence rules, refactoring parts into plone.event.
+* Johannes Raggam <johannes@raggam.co.at> - Refactoring for icalendar rrrule
+  support.
 
-* Copyright 2008-2010, BlueDynamics Alliance, Austria
+* Copyright 2008-2012, BlueDynamics Alliance, Austria
 
 * under BSD License derivative

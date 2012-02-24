@@ -1,11 +1,11 @@
+#from BTrees.IIBTree import IIBTree
+#from BTrees.IOBTree import IOBTree
+#from BTrees.Length import Length
 from logging import getLogger
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
-from BTrees.IIBTree import IIBTree
 from BTrees.IIBTree import IISet
 from BTrees.IIBTree import union, multiunion, intersection, difference
-from BTrees.IOBTree import IOBTree
-from BTrees.Length import Length
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from plone.event.utils import dt2int, pydt
 from plone.event.recurrence import recurrence_sequence_ical
