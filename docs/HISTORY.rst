@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.0b2 (2012-02-25)
+------------------
+
+- Repackaging: Adding a MANIFEST.in file.
+  [thet]
+
 2.0b1 (2012-02-24)
 ------------------
 
