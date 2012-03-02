@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.0b3 (2012-03-02)
+------------------
+
+- Repackaging: Fixing MANIFEST.in and adding missing files.
+  [thet]
+
 2.0b2 (2012-02-25)
 ------------------
 
