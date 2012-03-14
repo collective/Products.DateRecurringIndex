@@ -42,16 +42,3 @@ it will look fine to you, every day at 11:00am, doesnt matter if DST or not,
 your event happens. If you go international and your event is shown in a
 different timezone - or in the same in a country without DST at all - it might
 differ and is not always at the the time.
-
-
-Authors
-=======
-
-* Jens Klein <jens@bluedynamics.com> - Original implementation.
-
-* Johannes Raggam <johannes@raggam.co.at> - Refactoring for icalendar rrrule
-  support.
-
-* Copyright 2008-2012, BlueDynamics Alliance, Austria
-
-* under BSD License derivative
