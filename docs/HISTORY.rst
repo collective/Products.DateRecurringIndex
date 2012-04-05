@@ -4,6 +4,12 @@ Changelog
 2.0b3 (2012-03-02)
 ------------------
 
+- Fixed broken manage template.
+  [romanofski]
+
+- Added template to browse index contents.
+  [romanofski]
+
 - Repackaging: Fixing MANIFEST.in and adding missing files.
   [thet]
 
