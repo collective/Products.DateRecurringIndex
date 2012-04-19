@@ -9,7 +9,7 @@ class DRILayer(Layer):
         with z2.zopeApp() as app:
             z2.installProduct(app, 'Products.DateRecurringIndex')
 
-    def teasDown(self):
+    def tearDown(self):
         with z2.zopeApp() as app:
             z2.uninstallProduct(app, 'Products.DateRecurringIndex')
 
