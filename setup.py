@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '2.0b3'
+version = '2.0htug1'
 shortdesc = "Zope 2 date index with support for recurring events."
 longdesc = open('README.rst').read() + "\n\n" +\
            open(os.path.join("docs", "HISTORY.rst")).read()
