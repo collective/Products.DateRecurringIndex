@@ -102,7 +102,9 @@ class DateRecurringIndex(UnIndex):
 
         newvalues = IISet(map(dt2int, dates))
         oldvalues = self._unindex.get( documentId, _marker )
-
+        if oldvalues is not _marker:
+            oldvalues = IISet(oldvalues)
+ 
         if oldvalues is not _marker and newvalues is not _marker\
             and not difference(newvalues, oldvalues)\
             and not difference(oldvalues, newvalues):
@@ -129,7 +131,8 @@ class DateRecurringIndex(UnIndex):
                 self.insertForwardIndexEntry( value, documentId )
                 inserted = True
             if inserted:
-                self._unindex[documentId] = IISet(newvalues) # TODO: IISet necessary here?
+                # store tuple values in reverse index entries for sorting
+                self._unindex[documentId] = tuple(newvalues)
                 returnStatus = 1
 
         return returnStatus
