@@ -4,7 +4,10 @@ Changelog
 2.0dev
 ------
 
-- ...
+- Use tuple to store self._unindex (reverse index) values, instead of an
+  IISet, allowing for proper sorting, intended to fix:
+  https://github.com/collective/Products.DateRecurringIndex/issues/1
+  [seanupton]
 
 2.0b3 (2012-03-02)
 ------------------
