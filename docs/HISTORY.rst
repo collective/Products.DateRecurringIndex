@@ -7,6 +7,8 @@ Changelog
 - Use tuple to store self._unindex (reverse index) values, instead of an
   IISet, allowing for proper sorting, intended to fix:
   https://github.com/collective/Products.DateRecurringIndex/issues/1
+  For proper sorting, existing installations may wish to reindex any
+  indexes installed in their catalog using DateRecurringIndex.
   [seanupton]
 
 2.0b3 (2012-03-02)
