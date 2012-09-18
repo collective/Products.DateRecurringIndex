@@ -104,7 +104,7 @@ class DateRecurringIndex(UnIndex):
         oldvalues = self._unindex.get( documentId, _marker )
         if oldvalues is not _marker:
             oldvalues = IISet(oldvalues)
- 
+
         if oldvalues is not _marker and newvalues is not _marker\
             and not difference(newvalues, oldvalues)\
             and not difference(oldvalues, newvalues):
