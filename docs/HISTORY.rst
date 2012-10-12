@@ -1,8 +1,8 @@
 Changelog
 =========
 
-2.0dev
-------
+2.0 (2012-10-12)
+----------------
 
 - Use tuple to store self._unindex (reverse index) values, instead of an
   IISet, allowing for proper sorting, intended to fix:
