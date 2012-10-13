@@ -33,7 +33,7 @@ implementation in python. But these days  we have a better implementation.
 Even if the pythons datetime implementation has its problems, together with pytz
 for timezone handling it is very mature.
 
-So, why is it covered here? Just because the above mentioned dst-handling works
+So, why is it covered here? Just because dst-handling over recurring events works
 only if the start and until values are non-naive python datetimes. Just keep it
 in mind when using this index: If you use recurring dates and you want
 dst-adjust make sure your implementation returns a python datetime. And also
