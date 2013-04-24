@@ -1,10 +1,11 @@
 Changelog
 =========
 
-2.1dev (unreleased)
--------------------
+2.0.1 (2013-04-24)
+------------------
 
-- Nothing changed yet.
+- Licence and contributors updates.
+  [jensens]
 
 
 2.0 (2012-10-12)
