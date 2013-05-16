@@ -1,7 +1,6 @@
 include *.rst
-
 recursive-include docs *
 recursive-include src *
-
+global-include *.mo
 global-exclude *pyc
 global-exclude *.profile
