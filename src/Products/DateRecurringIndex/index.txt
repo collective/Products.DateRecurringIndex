@@ -6,8 +6,6 @@ DateRecurringIndex
 Overall tests
 -------------
 
-    >>> # interact( locals() )
-
 iCalendar Recurrence Mode
 =========================
 

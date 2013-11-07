@@ -1,6 +1,7 @@
 from plone.testing import z2
 from plone.testing import Layer
 
+
 class DRILayer(Layer):
 
     defaultBases = (z2.STARTUP,)
