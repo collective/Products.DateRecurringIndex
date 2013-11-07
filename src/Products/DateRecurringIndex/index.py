@@ -23,20 +23,24 @@ _marker = object()
 
 
 class IDateRecurringIndex(Interface):
-    attr_recurdef = Text(title=u'Attribute- or fieldname of recurrence rule definition. RFC2445 compatible string or timedelta.')
-    attr_until = Text(title=u'Attribute- or fieldname of until date (optional).')
+    attr_recurdef = Text(
+        title=u"Attribute- or fieldname of recurrence rule definition."
+              u"RFC2445 compatible string or timedelta."
+    )
+    attr_until = Text(
+        title=u"Attribute- or fieldname of until date (optional)."
+    )
 
 
 class DateRecurringIndex(UnIndex):
-
-    """Index for dates.
+    """Index for dates with recurrence support.
     """
     implements(IDateRecurringIndex)
 
     meta_type = 'DateRecurringIndex'
     query_options = ('query', 'range')
 
-    manage = manage_main = PageTemplateFile('www/manageDRIndex', globals())
+    manage_main = PageTemplateFile('www/manageDRIndex', globals())
     manage_browse = DTMLFile('www/browseIndex', globals())
 
     # TODO: for that, this has to be a DTMLFile?

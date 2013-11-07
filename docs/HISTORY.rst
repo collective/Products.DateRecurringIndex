@@ -1,10 +1,12 @@
 Changelog
 =========
 
-2.1dev (unreleased)
+2.1.dev (unreleased)
 -------------------
 
-- Nothing changred yet.
+- Fix the manage template declaration and avoid the deprecation warnings on
+  Zope startup.
+  [thet]
 
 
 2.0.1 (2013-04-24)
