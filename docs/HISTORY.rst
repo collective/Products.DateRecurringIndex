@@ -1,8 +1,8 @@
 Changelog
 =========
 
-2.1.dev (unreleased)
--------------------
+2.1 (2014-03-02)
+----------------
 
 - Fix the manage template declaration and avoid the deprecation warnings on
   Zope startup.
