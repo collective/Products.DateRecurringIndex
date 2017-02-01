@@ -56,6 +56,12 @@ class TestIndex(unittest.TestCase):
         cat.addIndex('start', dri)
         cat.addColumn('id')
 
+        # catalog needs to be contained somewhere, otherwise
+        # aquisition-wrapping of result brains doesn't work
+        from OFS.Folder import Folder
+        portal = Folder(id='portal')
+        cat.__parent__ = portal
+
         # Let's define some dummy events and catalog them.
         from datetime import datetime
         import pytz
