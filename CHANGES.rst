@@ -4,7 +4,8 @@ Changelog
 2.1.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- PEP 8.
+  [thet]
 
 
 2.1 (2014-03-02)

@@ -1,17 +1,25 @@
-from setuptools import setup, find_packages
-import os
+# -*- coding: utf-8 -*-
+"""Installer for the bda.aaf.site package."""
+
+from setuptools import find_packages
+from setuptools import setup
+
 
 version = '2.1.1.dev0'
-shortdesc = "Zope 2 date index with support for recurring events."
-longdesc = open('README.rst').read() + "\n\n" +\
-    open(os.path.join("docs", "HISTORY.rst")).read()
-license = open(os.path.join("docs", "LICENSE.rst")).read()
+short_description = "Zope 2 date index with support for recurring events."
+long_description = ('\n\n'.join([
+    open('README.rst').read(),
+    open('CONTRIBUTORS.rst').read(),
+    open('CHANGES.rst').read(),
+    open('LICENSE.rst').read(),
+]))
+
 
 setup(
     name='Products.DateRecurringIndex',
     version=version,
-    description=shortdesc,
-    long_description=longdesc + '\n\n' + license,
+    description=short_description,
+    long_description=long_description,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
@@ -34,9 +42,10 @@ setup(
     zip_safe=False,
     install_requires=[
         'setuptools',
-        'ZODB3',
-        'Zope2',
+        'BTrees',
         'plone.event',
+        'Products.ZCatalog >= 4.0a2',
+        'ZODB',
         'zope.interface',
         'zope.schema',
     ],
@@ -44,5 +53,6 @@ setup(
         'test': [
             'pytz',
             'plone.testing'
-        ]},
-    )
+        ]
+    },
+)

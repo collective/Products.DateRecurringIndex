@@ -1,22 +1,23 @@
-#from BTrees.IIBTree import IIBTree
-#from BTrees.IOBTree import IOBTree
-#from BTrees.Length import Length
-from logging import getLogger
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
+from BTrees.IIBTree import difference
 from BTrees.IIBTree import IISet
-from BTrees.IIBTree import union, multiunion, intersection, difference
-from Products.PageTemplates.PageTemplateFile import PageTemplateFile
-from plone.event.utils import dt2int, pydt
+from BTrees.IIBTree import intersection
+from BTrees.IIBTree import multiunion
+from BTrees.IIBTree import union
+from logging import getLogger
 from plone.event.recurrence import recurrence_sequence_ical
+from plone.event.utils import dt2int
+from plone.event.utils import pydt
+from Products.PageTemplates.PageTemplateFile import PageTemplateFile
+from Products.PluginIndexes.common import safe_callable
+from Products.PluginIndexes.common.util import parseIndexRequest
+from Products.PluginIndexes.unindex import UnIndex
 from ZODB.POSException import ConflictError
 from zope.interface import implements
 from zope.interface import Interface
 from zope.schema import Text
 
-from Products.PluginIndexes.common import safe_callable
-from Products.PluginIndexes.common.UnIndex import UnIndex
-from Products.PluginIndexes.common.util import parseIndexRequest
 
 LOG = getLogger('Products.DateRecurringIndex')
 _marker = object()
@@ -45,20 +46,12 @@ class DateRecurringIndex(UnIndex):
 
     # TODO: for that, this has to be a DTMLFile?
     #manage_main._setName( 'manage_main' )
-    manage_options = ( { 'label' : 'Settings'
-                       , 'action' : 'manage_main'
+    manage_options = ({'label': 'Settings', 'action': 'manage_main'
                        },
-                       {'label': 'Browse',
-                        'action': 'manage_browse',
+                      {'label': 'Browse',
+                       'action': 'manage_browse',
                        },
-                     )
-
-    #def clear( self ):
-    #    """ Complete reset """
-    #    self._index = IOBTree()
-    #    self._unindex = IIBTree()
-    #    self._length = Length()
-
+                      )
 
     def __init__(self, id, ignore_ex=None, call_methods=None,
                  extra=None, caller=None):
@@ -71,7 +64,7 @@ class DateRecurringIndex(UnIndex):
         self.attr_recurdef = extra.recurdef
         self.attr_until = extra.until
 
-    def index_object( self, documentId, obj, threshold=None ):
+    def index_object(self, documentId, obj, threshold=None):
         """index an object, normalizing the indexed value to an integer
 
            o Normalized value has granularity of one minute.
@@ -85,8 +78,8 @@ class DateRecurringIndex(UnIndex):
         returnStatus = 0
 
         try:
-            date_attr = getattr( obj, self.id )
-            if safe_callable( date_attr ):
+            date_attr = getattr(obj, self.id)
+            if safe_callable(date_attr):
                 date_attr = date_attr()
         except AttributeError:
             return returnStatus
@@ -102,16 +95,17 @@ class DateRecurringIndex(UnIndex):
             if safe_callable(until):
                 until = until()
 
-            dates = recurrence_sequence_ical(date_attr, recrule=recurdef, until=until)
+            dates = recurrence_sequence_ical(
+                date_attr, recrule=recurdef, until=until)
 
         newvalues = IISet(map(dt2int, dates))
-        oldvalues = self._unindex.get( documentId, _marker )
+        oldvalues = self._unindex.get(documentId, _marker)
         if oldvalues is not _marker:
             oldvalues = IISet(oldvalues)
 
         if oldvalues is not _marker and newvalues is not _marker\
-            and not difference(newvalues, oldvalues)\
-            and not difference(oldvalues, newvalues):
+                and not difference(newvalues, oldvalues)\
+                and not difference(oldvalues, newvalues):
             # difference is calculated relative to first argument, so we have to
             # use it twice here
             return returnStatus
@@ -126,13 +120,13 @@ class DateRecurringIndex(UnIndex):
                     raise
                 except:
                     LOG.error("Should not happen: oldvalues was there,"
-                                 " now it's not, for document with id %s" %
-                                   documentId)
+                              " now it's not, for document with id %s" %
+                              documentId)
 
         if newvalues is not _marker:
             inserted = False
             for value in newvalues:
-                self.insertForwardIndexEntry( value, documentId )
+                self.insertForwardIndexEntry(value, documentId)
                 inserted = True
             if inserted:
                 # store tuple values in reverse index entries for sorting
@@ -156,7 +150,7 @@ class DateRecurringIndex(UnIndex):
             raise
         except:
             LOG.debug('Attempt to unindex nonexistent document'
-                      ' with id %s' % documentId,exc_info=True)
+                      ' with id %s' % documentId, exc_info=True)
 
     def _apply_index(self, request, resultset=None):
         """Apply the index to query parameters given in the argument
@@ -174,19 +168,19 @@ class DateRecurringIndex(UnIndex):
         r = None
         opr = None
 
-        #experimental code for specifing the operator
-        operator = record.get( 'operator', self.useOperator )
-        if not operator in self.operators :
+        # experimental code for specifing the operator
+        operator = record.get('operator', self.useOperator)
+        if not operator in self.operators:
             raise RuntimeError("operator not valid: %s" % operator)
 
         # depending on the operator we use intersection or union
-        if operator=="or":
+        if operator == "or":
             set_func = union
         else:
             set_func = intersection
 
         # range parameter
-        range_arg = record.get('range',None)
+        range_arg = record.get('range', None)
         if range_arg:
             opr = "range"
             opr_args = []
@@ -195,12 +189,12 @@ class DateRecurringIndex(UnIndex):
             if range_arg.find("max") > -1:
                 opr_args.append("max")
 
-        if record.get('usage',None):
+        if record.get('usage', None):
             # see if any usage params are sent to field
             opr = record.usage.lower().split(':')
             opr, opr_args = opr[0], opr[1:]
 
-        if opr=="range":   # range search
+        if opr == "range":   # range search
             if 'min' in opr_args:
                 lo = min(keys)
             else:
@@ -212,13 +206,13 @@ class DateRecurringIndex(UnIndex):
                 hi = None
 
             if hi:
-                setlist = index.values(lo,hi)
+                setlist = index.values(lo, hi)
             else:
                 setlist = index.values(lo)
 
             r = multiunion(setlist)
 
-        else: # not a range search
+        else:  # not a range search
             for key in keys:
                 set = index.get(key, None)
                 if set is not None:
@@ -238,12 +232,13 @@ class DateRecurringIndex(UnIndex):
             return r, (self.id,)
 
 
-manage_addDRIndexForm = DTMLFile( 'www/addDRIndex', globals() )
+manage_addDRIndexForm = DTMLFile('www/addDRIndex', globals())
 
-def manage_addDRIndex( self, id, extra=None, REQUEST=None, RESPONSE=None,
-                       URL3=None):
+
+def manage_addDRIndex(self, id, extra=None, REQUEST=None, RESPONSE=None,
+                      URL3=None):
     """Add a DateRecurringIndex"""
-    return self.manage_addIndex(id, 'DateRecurringIndex', extra=extra, \
-                    REQUEST=REQUEST, RESPONSE=RESPONSE, URL1=URL3)
+    return self.manage_addIndex(id, 'DateRecurringIndex', extra=extra,
+                                REQUEST=REQUEST, RESPONSE=RESPONSE, URL1=URL3)
 
 InitializeClass(DateRecurringIndex)
