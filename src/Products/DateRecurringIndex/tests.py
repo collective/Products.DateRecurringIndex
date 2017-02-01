@@ -32,14 +32,148 @@ class DRITestcase(ztc.ZopeTestCase):
         return ids
 
 
-TESTFILES = ['index.txt', ]
+class TestIndex(unittest.TestCase):
 
+    def test_index(self):
+        """Test the index in icalendar/rfc5545 recurrence mode.
+        """
 
-def test_suite():
+        # Initialize the catalog with DateRecurringIndex
+        from Products.DateRecurringIndex.index import DateRecurringIndex
 
-    return unittest.TestSuite([
-        ztc.ZopeDocFileSuite(
-            filename,
-            optionflags=optionflags,
-            test_class=DRITestcase
-        ) for filename in TESTFILES])
+        dri = DateRecurringIndex(
+            'start',
+            extra=DummyExtras(
+                recurrence_type='ical',
+                recurdef='recurdef',
+                until='until')
+        )
+
+        # Index must have be the same name as dri's id
+        from Products.ZCatalog.Catalog import Catalog
+
+        cat = Catalog()
+        cat.addIndex('start', dri)
+        cat.addColumn('id')
+
+        # Let's define some dummy events and catalog them.
+        from datetime import datetime
+        import pytz
+        cet = pytz.timezone('CET')
+
+        # Index the same event more than once and test if index size changes.
+        test_event = DummyEvent(
+            id='test_event',
+            start=datetime(2001, 1, 1),
+            recurdef='RRULE:FREQ=DAILY;INTERVAL=1;COUNT=5'
+        )
+        self.assertEqual(
+            cat.catalogObject(test_event, 'test_event'),
+            1
+        )
+        self.assertEqual(dri.indexSize(), 5)
+
+        test_event = DummyEvent(
+            id='test_event',
+            start=datetime(2001, 1, 1),
+            recurdef='RRULE:FREQ=DAILY;INTERVAL=1;COUNT=3'
+        )
+        self.assertEqual(
+            cat.catalogObject(test_event, 'test_event'),
+            1
+        )
+        self.assertEqual(dri.indexSize(), 3)
+
+        test_event = DummyEvent(
+            id='test_event',
+            start=datetime(2001, 1, 1),
+            recurdef='RRULE:FREQ=DAILY;INTERVAL=1;COUNT=8'
+        )
+        self.assertEqual(
+            cat.catalogObject(test_event, 'test_event'),
+            1
+        )
+        self.assertEqual(dri.indexSize(), 8)
+
+        cat.uncatalogObject('test_event')
+        self.assertEqual(dri.indexSize(), 0)
+
+        # Index for querying later on...
+        nonr = DummyEvent(
+            id='nonr', start=datetime(2010, 10, 10, 0, 0, tzinfo=cet)
+        )
+        days = DummyEvent(
+            id='days', start=datetime(2010, 10, 10, 0, 0, tzinfo=cet),
+            recurdef='RRULE:FREQ=DAILY;INTERVAL=10;COUNT=5'
+        )
+        mins = DummyEvent(
+            id='mins', start=datetime(2010, 10, 10, 0, 0, tzinfo=cet),
+            recurdef='RRULE:FREQ=MINUTELY;INTERVAL=10;COUNT=5'
+        )
+        dstc = DummyEvent(
+            id='dstc', start=datetime(2010, 10, 20, 0, 0, tzinfo=cet),
+            recurdef='RRULE:FREQ=HOURLY;INTERVAL=1;COUNT=7'
+        )
+
+        cat.catalogObject(nonr, 'nonr')
+        cat.catalogObject(days, 'days')
+        cat.catalogObject(mins, 'mins')
+        cat.catalogObject(dstc, 'dstc')
+
+        # Query min one specific date
+        query = {
+            'start': {
+                'query': datetime(2010, 10, 10, 0, 0, tzinfo=cet),
+                'range': 'min',
+            },
+        }
+        res = cat(**query)
+        self.assertEqual(
+            sorted([it.id for it in res]),
+            ['days', 'dstc', 'mins', 'nonr']
+        )
+
+        # Query max one specific date
+        query = {
+            'start': {
+                'query': datetime(2010, 10, 10, 0, 0, tzinfo=cet),
+                'range': 'max',
+            },
+        }
+        res = cat(**query)
+        self.assertEqual(
+            sorted([it.id for it in res]),
+            ['days', 'mins', 'nonr']
+        )
+
+        # Query timerange over days and dstc set
+        query = {
+            'start': {
+                'query': [
+                    datetime(2010, 10, 11, 0, 0, tzinfo=cet),
+                    datetime(2010, 11, 20, 0, 0, tzinfo=cet)
+                ],
+                'range': 'min:max',
+            },
+        }
+        res = cat(**query)
+        self.assertEqual(
+            sorted([brain.id for brain in res]),
+            ['days', 'dstc']
+        )
+
+        # Query timerange over mins set
+        query = {
+            'start': {
+                'query': [
+                    datetime(2010, 10, 10, 0, 10, tzinfo=cet),
+                    datetime(2010, 10, 10, 0, 40, tzinfo=cet)
+                ],
+                'range': 'min:max',
+            },
+        }
+        res = cat(**query)
+        self.assertEqual(
+            sorted([brain.id for brain in res]),
+            ['mins']
+        )
