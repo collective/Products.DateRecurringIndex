@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
 import doctest
-from Testing import ZopeTestCase as ztc
 
 optionflags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 
@@ -21,15 +20,6 @@ class DummyExtras(object):
         self.recurrence_type = recurrence_type
         self.recurdef = recurdef
         self.until = until
-
-
-class DRITestcase(ztc.ZopeTestCase):
-    """Base TestCase for DateRecurringIndex."""
-
-    def idsOfBrainsSorted(self, brains):
-        ids = [brain.id for brain in brains]
-        ids.sort()
-        return ids
 
 
 class TestIndex(unittest.TestCase):
