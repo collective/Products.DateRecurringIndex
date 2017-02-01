@@ -2,19 +2,16 @@ from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from BTrees.IIBTree import difference
 from BTrees.IIBTree import IISet
-from BTrees.IIBTree import intersection
-from BTrees.IIBTree import multiunion
-from BTrees.IIBTree import union
 from logging import getLogger
+from OFS.PropertyManager import PropertyManager
 from plone.event.recurrence import recurrence_sequence_ical
 from plone.event.utils import dt2int
 from plone.event.utils import pydt
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
-from Products.PluginIndexes.common import safe_callable
-from Products.PluginIndexes.common.util import parseIndexRequest
 from Products.PluginIndexes.unindex import UnIndex
+from Products.PluginIndexes.util import safe_callable
 from ZODB.POSException import ConflictError
-from zope.interface import implements
+from zope.interface import implementer
 from zope.interface import Interface
 from zope.schema import Text
 
@@ -33,25 +30,24 @@ class IDateRecurringIndex(Interface):
     )
 
 
-class DateRecurringIndex(UnIndex):
+@implementer(IDateRecurringIndex)
+class DateRecurringIndex(UnIndex, PropertyManager):
     """Index for dates with recurrence support.
     """
-    implements(IDateRecurringIndex)
 
     meta_type = 'DateRecurringIndex'
-    query_options = ('query', 'range')
+    query_options = ('query', 'range', 'not')
 
     manage_main = PageTemplateFile('www/manageDRIndex', globals())
     manage_browse = DTMLFile('www/browseIndex', globals())
 
     # TODO: for that, this has to be a DTMLFile?
-    #manage_main._setName( 'manage_main' )
-    manage_options = ({'label': 'Settings', 'action': 'manage_main'
-                       },
-                      {'label': 'Browse',
-                       'action': 'manage_browse',
-                       },
-                      )
+    # manage_main._setName('manage_main')
+    manage_options = (
+        {'label': 'Settings', 'action': 'manage_main'},
+        {'label': 'Browse', 'action': 'manage_browse'},
+    ) + PropertyManager.manage_options
+
 
     def __init__(self, id, ignore_ex=None, call_methods=None,
                  extra=None, caller=None):
@@ -106,8 +102,8 @@ class DateRecurringIndex(UnIndex):
         if oldvalues is not _marker and newvalues is not _marker\
                 and not difference(newvalues, oldvalues)\
                 and not difference(oldvalues, newvalues):
-            # difference is calculated relative to first argument, so we have to
-            # use it twice here
+            # difference is calculated relative to first argument, so we have
+            # to use it twice here
             return returnStatus
 
         if oldvalues is not _marker:
@@ -118,7 +114,7 @@ class DateRecurringIndex(UnIndex):
                     del self._unindex[documentId]
                 except ConflictError:
                     raise
-                except:
+                except Exception:
                     LOG.error("Should not happen: oldvalues was there,"
                               " now it's not, for document with id %s" %
                               documentId)
@@ -132,6 +128,9 @@ class DateRecurringIndex(UnIndex):
                 # store tuple values in reverse index entries for sorting
                 self._unindex[documentId] = tuple(newvalues)
                 returnStatus = 1
+
+        if returnStatus > 0:
+            self._increment_counter()
 
         return returnStatus
 
@@ -148,88 +147,14 @@ class DateRecurringIndex(UnIndex):
             del self._unindex[documentId]
         except ConflictError:
             raise
-        except:
+        except Exception:
             LOG.debug('Attempt to unindex nonexistent document'
                       ' with id %s' % documentId, exc_info=True)
 
-    def _apply_index(self, request, resultset=None):
-        """Apply the index to query parameters given in the argument
-
-        Normalize the 'query' arguments into integer values at minute
-        precision before querying.
+    def _convert(self, value, default=None):
+        """Convert record keys/datetimes into int representation.
         """
-        record = parseIndexRequest(request, self.id, self.query_options)
-        if record.keys is None:
-            return None
-
-        keys = map(dt2int, map(pydt, record.keys))
-
-        index = self._index
-        r = None
-        opr = None
-
-        # experimental code for specifing the operator
-        operator = record.get('operator', self.useOperator)
-        if not operator in self.operators:
-            raise RuntimeError("operator not valid: %s" % operator)
-
-        # depending on the operator we use intersection or union
-        if operator == "or":
-            set_func = union
-        else:
-            set_func = intersection
-
-        # range parameter
-        range_arg = record.get('range', None)
-        if range_arg:
-            opr = "range"
-            opr_args = []
-            if range_arg.find("min") > -1:
-                opr_args.append("min")
-            if range_arg.find("max") > -1:
-                opr_args.append("max")
-
-        if record.get('usage', None):
-            # see if any usage params are sent to field
-            opr = record.usage.lower().split(':')
-            opr, opr_args = opr[0], opr[1:]
-
-        if opr == "range":   # range search
-            if 'min' in opr_args:
-                lo = min(keys)
-            else:
-                lo = None
-
-            if 'max' in opr_args:
-                hi = max(keys)
-            else:
-                hi = None
-
-            if hi:
-                setlist = index.values(lo, hi)
-            else:
-                setlist = index.values(lo)
-
-            r = multiunion(setlist)
-
-        else:  # not a range search
-            for key in keys:
-                set = index.get(key, None)
-                if set is not None:
-                    if isinstance(set, int):
-                        set = IISet((set,))
-                    else:
-                        # set can't be bigger than resultset
-                        set = intersection(set, resultset)
-                    r = set_func(r, set)
-
-        if isinstance(r, int):
-            r = IISet((r,))
-
-        if r is None:
-            return IISet(), (self.id,)
-        else:
-            return r, (self.id,)
+        return dt2int(value) or default
 
 
 manage_addDRIndexForm = DTMLFile('www/addDRIndex', globals())
@@ -240,5 +165,6 @@ def manage_addDRIndex(self, id, extra=None, REQUEST=None, RESPONSE=None,
     """Add a DateRecurringIndex"""
     return self.manage_addIndex(id, 'DateRecurringIndex', extra=extra,
                                 REQUEST=REQUEST, RESPONSE=RESPONSE, URL1=URL3)
+
 
 InitializeClass(DateRecurringIndex)

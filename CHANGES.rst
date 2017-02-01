@@ -1,8 +1,11 @@
 Changelog
 =========
 
-2.1.1 (unreleased)
-------------------
+3.0 (unreleased)
+----------------
+
+- Code alignment to Products.ZCatalog 4.
+  [thet]
 
 - PEP 8.
   [thet]
