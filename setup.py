@@ -44,7 +44,7 @@ setup(
         'setuptools',
         'BTrees',
         'plone.event',
-        'Products.ZCatalog >= 4.0a2',
+        'Products.ZCatalog',
         'ZODB',
         'zope.interface',
         'zope.schema',
