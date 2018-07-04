@@ -1,4 +1,4 @@
-from App.class_init import InitializeClass
+from AccessControl.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from BTrees.IIBTree import difference
 from BTrees.IIBTree import IISet

@@ -3,7 +3,7 @@
 
 def initialize(context):
     # Products.* initialization code is Automatically called by Zope
-    import index
+    from . import index
     context.registerClass(
         index.DateRecurringIndex,
         permission='Add Pluggable Index',
