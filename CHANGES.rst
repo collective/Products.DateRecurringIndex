@@ -4,6 +4,9 @@ Changelog
 3.0 (unreleased)
 ----------------
 
+- Python 3/ Zope 4 compatibility.
+  [pbauer, jensens]
+
 - Code alignment to Products.ZCatalog 4.
   [thet]
 
