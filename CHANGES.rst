@@ -1,8 +1,8 @@
 Changelog
 =========
 
-3.0 (unreleased)
-----------------
+3.0.0 (2018-10-02)
+------------------
 
 - Python 3/ Zope 4 compatibility.
   [pbauer, jensens]
