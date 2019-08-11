@@ -5,7 +5,7 @@ have signed the Plone Contributors Agreement [1][2]. Thanks!
 
 - Jens Klein, yenzenz (Original implementation)
 - Johannes Raggam, thet
-- Róman Joost, romanofski
+- Roman Joost, romanofski
 - Dorneles Tremea, Dorneles
 - Sean Upton, supton
 
