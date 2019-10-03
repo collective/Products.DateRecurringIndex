@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- remove unicode char from CONTRIBUTORS.rst
+  [tkimnguyen]
 
 
 3.0.0 (2018-10-02)
