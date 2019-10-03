@@ -4,16 +4,6 @@ Changelog
 3.0.1 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
-Bug fixes:
-
 - remove unicode char from CONTRIBUTORS.rst
   [tkimnguyen]
 
