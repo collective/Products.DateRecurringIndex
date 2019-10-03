@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.1 (unreleased)
+3.0.1 (2019-10-03)
 ------------------
 
 - remove unicode char from CONTRIBUTORS.rst

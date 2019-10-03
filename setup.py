@@ -5,7 +5,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 
-version = '3.0.1.dev0'
+version = '3.0.1'
 short_description = "Zope 2 date index with support for recurring events."
 long_description = ('\n\n'.join([
     open('README.rst').read(),
