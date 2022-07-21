@@ -4,7 +4,8 @@ Changelog
 3.0.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Implements IDateRangeIndex so is excluded by index that could have value in the keys of the catalog plan
+  [mamico]
 
 
 3.0.1 (2019-10-03)
