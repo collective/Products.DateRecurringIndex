@@ -1,7 +1,11 @@
 *.egg-info
 *.mo
 *.py?
-.*
 dist/
-!.gitattributes
-!.gitignore
+.coverage
+.coverage.*
+.eggs/
+.installed.cfg
+.mr.developer.cfg
+.tox/
+.vscode/
