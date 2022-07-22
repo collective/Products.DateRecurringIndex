@@ -4,7 +4,7 @@ Changelog
 3.0.2 (unreleased)
 ------------------
 
-- Implements IDateRangeIndex so is excluded by index that could have value in the keys of the catalog plan
+- Implements IDateRangeIndex to exclude DateRecurringIndex by indexes with value in the keys of the catalog plan
   [mamico]
 
 
