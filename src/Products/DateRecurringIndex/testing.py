@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from plone.testing import z2
-from plone.testing import Layer
+from plone.testing import Layer, z2
 
 
 class DRILayer(Layer):

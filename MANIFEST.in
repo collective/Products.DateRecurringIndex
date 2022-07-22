@@ -1,4 +1,7 @@
 include *.rst
+include buildout.cfg
+include tox.ini
+include buildout4.cfg
 recursive-include docs *
 recursive-include src *
 global-include *.mo
