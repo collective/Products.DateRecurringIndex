@@ -1,26 +1,25 @@
+# -*- coding: utf-8 -*-
+from logging import getLogger
+
 from AccessControl.class_init import InitializeClass
 from App.special_dtml import DTMLFile
-from BTrees.IIBTree import difference
-from BTrees.IIBTree import IISet
-from logging import getLogger
+from BTrees.IIBTree import IISet, difference
 from OFS.PropertyManager import PropertyManager
 from plone.event.recurrence import recurrence_sequence_ical
-from plone.event.utils import dt2int
-from plone.event.utils import pydt
+from plone.event.utils import dt2int, pydt
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
+from Products.PluginIndexes.interfaces import IDateRangeIndex
 from Products.PluginIndexes.unindex import UnIndex
 from Products.PluginIndexes.util import safe_callable
 from ZODB.POSException import ConflictError
 from zope.interface import implementer
-from zope.interface import Interface
 from zope.schema import Text
-
 
 LOG = getLogger('Products.DateRecurringIndex')
 _marker = object()
 
 
-class IDateRecurringIndex(Interface):
+class IDateRecurringIndex(IDateRangeIndex):
     attr_recurdef = Text(
         title=u"Attribute- or fieldname of recurrence rule definition."
               u"RFC2445 compatible string or timedelta."
@@ -47,7 +46,6 @@ class DateRecurringIndex(UnIndex, PropertyManager):
         {'label': 'Settings', 'action': 'manage_main'},
         {'label': 'Browse', 'action': 'manage_browse'},
     ) + PropertyManager.manage_options
-
 
     def __init__(self, id, ignore_ex=None, call_methods=None,
                  extra=None, caller=None):
@@ -87,7 +85,7 @@ class DateRecurringIndex(UnIndex, PropertyManager):
         if not recurdef:
             dates = [pydt(date_attr)]
         else:
-            until = getattr(obj, self.attr_until, None)
+            until = getattr(obj, self.getUntilField(), None)
             if safe_callable(until):
                 until = until()
 
@@ -155,6 +153,16 @@ class DateRecurringIndex(UnIndex, PropertyManager):
         """Convert record keys/datetimes into int representation.
         """
         return dt2int(value) or default
+
+    def getSinceField(self):
+        """Get the name of the attribute indexed as start date.
+        """
+        return None
+
+    def getUntilField(self):
+        """Get the name of the attribute indexed as end date.
+        """
+        return self.attr_until
 
 
 manage_addDRIndexForm = DTMLFile('www/addDRIndex', globals())

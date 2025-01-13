@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 """Installer for the bda.aaf.site package."""
 
-from setuptools import find_packages
-from setuptools import setup
-
+from setuptools import find_packages, setup
 
 version = '3.0.2.dev0'
 short_description = "Zope 2 date index with support for recurring events."
@@ -31,6 +29,9 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     ],
     keywords='zope zope2 index catalog date recurring',
@@ -45,6 +46,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'setuptools',
+        'six',
         'BTrees',
         'plone.event',
         'Products.ZCatalog',
