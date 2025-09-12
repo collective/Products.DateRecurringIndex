@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from logging import getLogger
 
 from AccessControl.class_init import InitializeClass
@@ -21,11 +20,11 @@ _marker = object()
 
 class IDateRecurringIndex(IDateRangeIndex):
     attr_recurdef = Text(
-        title=u"Attribute- or fieldname of recurrence rule definition."
-              u"RFC2445 compatible string or timedelta."
+        title="Attribute- or fieldname of recurrence rule definition."
+              "RFC2445 compatible string or timedelta."
     )
     attr_until = Text(
-        title=u"Attribute- or fieldname of until date (optional)."
+        title="Attribute- or fieldname of until date (optional)."
     )
 
 

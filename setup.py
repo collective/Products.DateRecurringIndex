@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Installer for the bda.aaf.site package."""
 
 from setuptools import find_packages, setup

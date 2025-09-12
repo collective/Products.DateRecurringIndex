@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import doctest
 import unittest
 from datetime import datetime
@@ -14,7 +13,7 @@ from Products.DateRecurringIndex.index import DateRecurringIndex
 optionflags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 
 
-class DummyEvent(object):
+class DummyEvent:
     """some dummy with a start, delta and until to index"""
 
     def __init__(self, id=None, start=None, recurdef=None, until=None):
@@ -24,7 +23,7 @@ class DummyEvent(object):
         self.until = until
 
 
-class DummyExtras(object):
+class DummyExtras:
     def __init__(self, recurrence_type=None, recurdef=None, until=None):
         self.recurrence_type = recurrence_type
         self.recurdef = recurdef

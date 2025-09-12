@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.testing import Layer, z2
 
 

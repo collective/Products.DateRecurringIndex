@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def initialize(context):
     # Products.* initialization code is Automatically called by Zope
     from . import index
