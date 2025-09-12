@@ -1,11 +1,12 @@
-from logging import getLogger
-
 from AccessControl.class_init import InitializeClass
 from App.special_dtml import DTMLFile
-from BTrees.IIBTree import IISet, difference
+from BTrees.IIBTree import difference
+from BTrees.IIBTree import IISet
+from logging import getLogger
 from OFS.PropertyManager import PropertyManager
 from plone.event.recurrence import recurrence_sequence_ical
-from plone.event.utils import dt2int, pydt
+from plone.event.utils import dt2int
+from plone.event.utils import pydt
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.PluginIndexes.interfaces import IDateRangeIndex
 from Products.PluginIndexes.unindex import UnIndex
@@ -13,6 +14,7 @@ from Products.PluginIndexes.util import safe_callable
 from ZODB.POSException import ConflictError
 from zope.interface import implementer
 from zope.schema import Text
+
 
 LOG = getLogger('Products.DateRecurringIndex')
 _marker = object()

@@ -1,6 +1,8 @@
 """Installer for the bda.aaf.site package."""
 
-from setuptools import find_packages, setup
+from setuptools import find_packages
+from setuptools import setup
+
 
 version = '3.0.2.dev0'
 short_description = "Zope 2 date index with support for recurring events."

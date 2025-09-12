@@ -1,14 +1,14 @@
-import doctest
-import unittest
 from datetime import datetime
-
-import pytz
 from OFS.Folder import Folder
+from Products.DateRecurringIndex.index import DateRecurringIndex
 from Products.ZCatalog.Catalog import Catalog
 from Products.ZCatalog.ZCatalog import ZCatalog
 from zope.testing import cleanup
 
-from Products.DateRecurringIndex.index import DateRecurringIndex
+import doctest
+import pytz
+import unittest
+
 
 optionflags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 
