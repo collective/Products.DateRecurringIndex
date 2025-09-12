@@ -8,11 +8,11 @@ class DRILayer(Layer):
 
     def setUp(self):
         with z2.zopeApp() as app:
-            z2.installProduct(app, 'Products.DateRecurringIndex')
+            z2.installProduct(app, "Products.DateRecurringIndex")
 
     def tearDown(self):
         with z2.zopeApp() as app:
-            z2.uninstallProduct(app, 'Products.DateRecurringIndex')
+            z2.uninstallProduct(app, "Products.DateRecurringIndex")
 
 
 DRI_FIXTURE = DRILayer()

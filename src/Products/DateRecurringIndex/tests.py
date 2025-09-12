@@ -86,8 +86,7 @@ class TestIndex(cleanup.CleanUp, unittest.TestCase):
         self.assertEqual(dri.indexSize(), 0)
 
         # Index for querying later on...
-        nonr = DummyEvent(
-            id="nonr", start=datetime(2010, 10, 10, 0, 0, tzinfo=cet))
+        nonr = DummyEvent(id="nonr", start=datetime(2010, 10, 10, 0, 0, tzinfo=cet))
         days = DummyEvent(
             id="days",
             start=datetime(2010, 10, 10, 0, 0, tzinfo=cet),
@@ -129,10 +128,7 @@ class TestIndex(cleanup.CleanUp, unittest.TestCase):
             },
         }
         res = cat(**query)
-        self.assertEqual(
-            sorted([it.id for it in res]),
-            ["days", "mins", "nonr"]
-        )
+        self.assertEqual(sorted([it.id for it in res]), ["days", "mins", "nonr"])
 
         # Query timerange over days and dstc set
         query = {
