@@ -51,13 +51,19 @@ setup(
     python_requires=">=3.9",
     install_requires=[
         "setuptools",
-        "six",
+        "AccessControl",
         "BTrees",
         "plone.event",
-        "Products.ZCatalog",
         "ZODB",
+        "Zope",
         "zope.interface",
         "zope.schema",
     ],
-    extras_require={"test": ["pytz", "plone.testing"]},
+    extras_require={
+        "test": [
+            "pytz",
+            "plone.testing",
+            "Products.ZCatalog",
+        ]
+    },
 )
