@@ -18,10 +18,10 @@ recurdef
 until
     Optional. The name of the objects attribute, which returns the date, until
     the recurrence should happen. The recurrence definition can also contain an
-    UNTIL component. If both are defined, the recurrence calculation stops 
+    UNTIL component. If both are defined, the recurrence calculation stops
     whenever the first until-date is met. If not given at all, there is a
     MAXCOUNT ceiling constant, defined in plone.event.recurrence, which defines
-    the maximum number of occurences.
+    the maximum number of occurrences.
 
 
 Datetime.DateTime vs. datetime.datetime
@@ -37,8 +37,8 @@ So, why is it covered here? Just because dst-handling over recurring events work
 only if the start and until values are non-naive python datetimes. Just keep it
 in mind when using this index: If you use recurring dates and you want
 dst-adjust make sure your implementation returns a python datetime. And also
-keep in mind: If youre i.e. in Austria with CET timezone, add a recurring date:
-it will look fine to you, every day at 11:00am, doesnt matter if DST or not,
+keep in mind: If you are i.e. in Austria with CET timezone, add a recurring date:
+it will look fine to you, every day at 11:00am, doesn't matter if DST or not,
 your event happens. If you go international and your event is shown in a
 different timezone - or in the same in a country without DST at all - it might
 differ and is not always at the the time.

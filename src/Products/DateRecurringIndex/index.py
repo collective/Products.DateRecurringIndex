@@ -64,7 +64,7 @@ class DateRecurringIndex(UnIndex, PropertyManager):
         o Objects which have 'None' as indexed value are *omitted*,
           by design.
 
-        o Repeat by recurdef - a RFC2445 reccurence definition string
+        o Repeat by recurdef - a RFC2445 recurrence definition string
 
         """
         returnStatus = 0
