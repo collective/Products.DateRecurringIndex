@@ -1,0 +1,16 @@
+# Generated from:
+# https://github.com/plone/meta/tree/main/src/plone/meta/default
+# See the inline comments on how to expand/tweak this configuration file
+[meta]
+template = "default"
+commit-id = "2.1.0"
+
+[pre_commit]
+i18ndude_extra_lines = """
+        pass_filenames: false
+"""
+
+[pyproject]
+dependencies_mappings = [
+  "'Products.ZCatalog' = ['Products.ZCTextIndex', 'Products.PluginIndexes']",
+]

@@ -1,12 +1,12 @@
-# -*- coding: utf-8 -*-
-from logging import getLogger
-
 from AccessControl.class_init import InitializeClass
 from App.special_dtml import DTMLFile
-from BTrees.IIBTree import IISet, difference
+from BTrees.IIBTree import difference
+from BTrees.IIBTree import IISet
+from logging import getLogger
 from OFS.PropertyManager import PropertyManager
 from plone.event.recurrence import recurrence_sequence_ical
-from plone.event.utils import dt2int, pydt
+from plone.event.utils import dt2int
+from plone.event.utils import pydt
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.PluginIndexes.interfaces import IDateRangeIndex
 from Products.PluginIndexes.unindex import UnIndex
@@ -15,58 +15,56 @@ from ZODB.POSException import ConflictError
 from zope.interface import implementer
 from zope.schema import Text
 
-LOG = getLogger('Products.DateRecurringIndex')
+
+LOG = getLogger("Products.DateRecurringIndex")
 _marker = object()
 
 
 class IDateRecurringIndex(IDateRangeIndex):
     attr_recurdef = Text(
-        title=u"Attribute- or fieldname of recurrence rule definition."
-              u"RFC2445 compatible string or timedelta."
+        title="Attribute- or fieldname of recurrence rule definition."
+        "RFC2445 compatible string or timedelta."
     )
-    attr_until = Text(
-        title=u"Attribute- or fieldname of until date (optional)."
-    )
+    attr_until = Text(title="Attribute- or fieldname of until date (optional).")
 
 
 @implementer(IDateRecurringIndex)
 class DateRecurringIndex(UnIndex, PropertyManager):
-    """Index for dates with recurrence support.
-    """
+    """Index for dates with recurrence support."""
 
-    meta_type = 'DateRecurringIndex'
-    query_options = ('query', 'range', 'not')
+    meta_type = "DateRecurringIndex"
+    query_options = ("query", "range", "not")
 
-    manage_main = PageTemplateFile('www/manageDRIndex', globals())
-    manage_browse = DTMLFile('www/browseIndex', globals())
+    manage_main = PageTemplateFile("www/manageDRIndex", globals())
+    manage_browse = DTMLFile("www/browseIndex", globals())
 
     # TODO: for that, this has to be a DTMLFile?
     # manage_main._setName('manage_main')
     manage_options = (
-        {'label': 'Settings', 'action': 'manage_main'},
-        {'label': 'Browse', 'action': 'manage_browse'},
+        {"label": "Settings", "action": "manage_main"},
+        {"label": "Browse", "action": "manage_browse"},
     ) + PropertyManager.manage_options
 
-    def __init__(self, id, ignore_ex=None, call_methods=None,
-                 extra=None, caller=None):
-        """ Initialize the index
+    def __init__(self, id, ignore_ex=None, call_methods=None, extra=None, caller=None):
+        """Initialize the index
         @ param extra.recurdef:
         @ param extral.until:
         """
-        UnIndex.__init__(self, id, ignore_ex=None, call_methods=None,
-                         extra=None, caller=None)
+        UnIndex.__init__(
+            self, id, ignore_ex=None, call_methods=None, extra=None, caller=None
+        )
         self.attr_recurdef = extra.recurdef
         self.attr_until = extra.until
 
     def index_object(self, documentId, obj, threshold=None):
         """index an object, normalizing the indexed value to an integer
 
-           o Normalized value has granularity of one minute.
+        o Normalized value has granularity of one minute.
 
-           o Objects which have 'None' as indexed value are *omitted*,
-             by design.
+        o Objects which have 'None' as indexed value are *omitted*,
+          by design.
 
-           o Repeat by recurdef - a RFC2445 reccurence definition string
+        o Repeat by recurdef - a RFC2445 recurrence definition string
 
         """
         returnStatus = 0
@@ -89,17 +87,19 @@ class DateRecurringIndex(UnIndex, PropertyManager):
             if safe_callable(until):
                 until = until()
 
-            dates = recurrence_sequence_ical(
-                date_attr, recrule=recurdef, until=until)
+            dates = recurrence_sequence_ical(date_attr, recrule=recurdef, until=until)
 
         newvalues = IISet(map(dt2int, dates))
         oldvalues = self._unindex.get(documentId, _marker)
         if oldvalues is not _marker:
             oldvalues = IISet(oldvalues)
 
-        if oldvalues is not _marker and newvalues is not _marker\
-                and not difference(newvalues, oldvalues)\
-                and not difference(oldvalues, newvalues):
+        if (
+            oldvalues is not _marker
+            and newvalues is not _marker
+            and not difference(newvalues, oldvalues)
+            and not difference(oldvalues, newvalues)
+        ):
             # difference is calculated relative to first argument, so we have
             # to use it twice here
             return returnStatus
@@ -113,9 +113,10 @@ class DateRecurringIndex(UnIndex, PropertyManager):
                 except ConflictError:
                     raise
                 except Exception:
-                    LOG.error("Should not happen: oldvalues was there,"
-                              " now it's not, for document with id %s" %
-                              documentId)
+                    LOG.error(
+                        "Should not happen: oldvalues was there,"
+                        " now it's not, for document with id %s" % documentId
+                    )
 
         if newvalues is not _marker:
             inserted = False
@@ -133,7 +134,7 @@ class DateRecurringIndex(UnIndex, PropertyManager):
         return returnStatus
 
     def unindex_object(self, documentId):
-        """ Carefully unindex the object with integer id 'documentId'"""
+        """Carefully unindex the object with integer id 'documentId'"""
         values = self._unindex.get(documentId, _marker)
         if values is _marker:
             return None
@@ -146,33 +147,37 @@ class DateRecurringIndex(UnIndex, PropertyManager):
         except ConflictError:
             raise
         except Exception:
-            LOG.debug('Attempt to unindex nonexistent document'
-                      ' with id %s' % documentId, exc_info=True)
+            LOG.debug(
+                "Attempt to unindex nonexistent document" " with id %s" % documentId,
+                exc_info=True,
+            )
 
     def _convert(self, value, default=None):
-        """Convert record keys/datetimes into int representation.
-        """
+        """Convert record keys/datetimes into int representation."""
         return dt2int(value) or default
 
     def getSinceField(self):
-        """Get the name of the attribute indexed as start date.
-        """
+        """Get the name of the attribute indexed as start date."""
         return None
 
     def getUntilField(self):
-        """Get the name of the attribute indexed as end date.
-        """
+        """Get the name of the attribute indexed as end date."""
         return self.attr_until
 
 
-manage_addDRIndexForm = DTMLFile('www/addDRIndex', globals())
+manage_addDRIndexForm = DTMLFile("www/addDRIndex", globals())
 
 
-def manage_addDRIndex(self, id, extra=None, REQUEST=None, RESPONSE=None,
-                      URL3=None):
+def manage_addDRIndex(self, id, extra=None, REQUEST=None, RESPONSE=None, URL3=None):
     """Add a DateRecurringIndex"""
-    return self.manage_addIndex(id, 'DateRecurringIndex', extra=extra,
-                                REQUEST=REQUEST, RESPONSE=RESPONSE, URL1=URL3)
+    return self.manage_addIndex(
+        id,
+        "DateRecurringIndex",
+        extra=extra,
+        REQUEST=REQUEST,
+        RESPONSE=RESPONSE,
+        URL1=URL3,
+    )
 
 
 InitializeClass(DateRecurringIndex)

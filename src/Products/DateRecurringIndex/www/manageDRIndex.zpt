@@ -1,16 +1,16 @@
 <h1 tal:replace="structure context/manage_page_header">HEADER</h1>
 <h1 tal:replace="structure context/manage_tabs">TABS</h1>
 
-    <span tal:replace="context/numObjects" />
-    <p class="form-help">Distinct values:</p>
-    <span tal:replace="context/indexSize" />
-    <p class="form-help">
+<span tal:replace="context/numObjects"></span>
+<p class="form-help">Distinct values:</p>
+<span tal:replace="context/indexSize"></span>
+<p class="form-help">
       Attribute- or fieldname of recurrence rule definition (RFC2445 recurrence rule string or delta/integer in minutes):
-    </p>
-    <span tal:replace="context/attr_recurdef" />
-    <p class="form-help">
+</p>
+<span tal:replace="context/attr_recurdef"></span>
+<p class="form-help">
       Attribute- or fieldname of until date (optional):
-    </p>
-    <span tal:replace="context/attr_until" />
+</p>
+<span tal:replace="context/attr_until"></span>
 
 <h1 tal:replace="structure context/manage_page_footer">FOOTER</h1>

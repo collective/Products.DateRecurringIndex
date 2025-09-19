@@ -1,20 +1,19 @@
-# -*- coding: utf-8 -*-
-import doctest
-import unittest
 from datetime import datetime
-
-import pytz
 from OFS.Folder import Folder
+from Products.DateRecurringIndex.index import DateRecurringIndex
 from Products.ZCatalog.Catalog import Catalog
 from Products.ZCatalog.ZCatalog import ZCatalog
 from zope.testing import cleanup
 
-from Products.DateRecurringIndex.index import DateRecurringIndex
+import doctest
+import pytz
+import unittest
+
 
 optionflags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 
 
-class DummyEvent(object):
+class DummyEvent:
     """some dummy with a start, delta and until to index"""
 
     def __init__(self, id=None, start=None, recurdef=None, until=None):
@@ -24,7 +23,7 @@ class DummyEvent(object):
         self.until = until
 
 
-class DummyExtras(object):
+class DummyExtras:
     def __init__(self, recurrence_type=None, recurdef=None, until=None):
         self.recurrence_type = recurrence_type
         self.recurdef = recurdef
@@ -87,8 +86,7 @@ class TestIndex(cleanup.CleanUp, unittest.TestCase):
         self.assertEqual(dri.indexSize(), 0)
 
         # Index for querying later on...
-        nonr = DummyEvent(
-            id="nonr", start=datetime(2010, 10, 10, 0, 0, tzinfo=cet))
+        nonr = DummyEvent(id="nonr", start=datetime(2010, 10, 10, 0, 0, tzinfo=cet))
         days = DummyEvent(
             id="days",
             start=datetime(2010, 10, 10, 0, 0, tzinfo=cet),
@@ -130,10 +128,7 @@ class TestIndex(cleanup.CleanUp, unittest.TestCase):
             },
         }
         res = cat(**query)
-        self.assertEqual(
-            sorted([it.id for it in res]),
-            ["days", "mins", "nonr"]
-        )
+        self.assertEqual(sorted([it.id for it in res]), ["days", "mins", "nonr"])
 
         # Query timerange over days and dstc set
         query = {
