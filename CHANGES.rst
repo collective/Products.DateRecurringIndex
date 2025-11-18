@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.2 (unreleased)
+4.0.0 (unreleased)
 ------------------
 
 - Implements IDateRangeIndex to exclude DateRecurringIndex by indexes with value in the keys of the catalog plan
