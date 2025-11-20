@@ -50,7 +50,6 @@ setup(
     zip_safe=False,
     python_requires=">=3.9",
     install_requires=[
-        "setuptools",
         "AccessControl",
         "BTrees",
         "plone.event",
