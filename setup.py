@@ -4,7 +4,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 
-version = "3.0.2.dev0"
+version = "4.0.0.dev0"
 short_description = "Zope 2 date index with support for recurring events."
 long_description = "\n\n".join(
     [
@@ -25,11 +25,10 @@ setup(
         "Development Status :: 5 - Production/Stable",
         "Environment :: Web Environment",
         "Framework :: Zope2",
-        "Framework :: Zope :: 4",
+        "Framework :: Zope :: 5",
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
@@ -48,9 +47,8 @@ setup(
     ],
     include_package_data=True,
     zip_safe=False,
-    python_requires=">=3.9",
+    python_requires=">=3.10",
     install_requires=[
-        "setuptools",
         "AccessControl",
         "BTrees",
         "plone.event",
