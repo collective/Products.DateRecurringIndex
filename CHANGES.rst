@@ -4,6 +4,9 @@ Changelog
 4.0.0 (unreleased)
 ------------------
 
+- Replace ``pkg_resources`` namespace with PEP 420 native namespace.
+  Support only Plone 6.2 and Python 3.10+.
+
 - Implements IDateRangeIndex to exclude DateRecurringIndex by indexes with value in the keys of the catalog plan
   [mamico]
 
