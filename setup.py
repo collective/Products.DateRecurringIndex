@@ -4,7 +4,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 
-version = "4.0.0.dev0"
+version = "4.0.0a1.dev0"
 short_description = "Zope 2 date index with support for recurring events."
 long_description = "\n\n".join(
     [
