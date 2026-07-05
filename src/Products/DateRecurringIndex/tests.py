@@ -9,7 +9,6 @@ import doctest
 import pytz
 import unittest
 
-
 optionflags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 
 

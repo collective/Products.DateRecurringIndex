@@ -15,7 +15,6 @@ from ZODB.POSException import ConflictError
 from zope.interface import implementer
 from zope.schema import Text
 
-
 LOG = getLogger("Products.DateRecurringIndex")
 _marker = object()
 
