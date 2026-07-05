@@ -2,7 +2,6 @@
 
 from setuptools import setup
 
-
 version = "4.0.1.dev0"
 short_description = "Zope 2 date index with support for recurring events."
 long_description = "\n\n".join(
@@ -35,6 +34,7 @@ setup(
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
     ],
     keywords="zope zope2 index catalog date recurring",
