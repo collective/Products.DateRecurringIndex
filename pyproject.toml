@@ -4,8 +4,6 @@
 [build-system]
 requires = ["setuptools>=68.2,<83", "wheel"]
 
-
-
 ##
 # Add extra configuration options in .meta.toml:
 #  [pyproject]
@@ -13,6 +11,70 @@ requires = ["setuptools>=68.2,<83", "wheel"]
 #  extra_configuration
 #  """
 ##
+
+# START-MARKER-MANUAL-CONFIG
+# Anything from here until END-MARKER-MANUAL-CONFIG
+# will be kept by plone.meta
+
+[project]
+name = "Products.DateRecurringIndex"
+version = "4.0.1.dev0"
+description = "Zope 2 date index with support for recurring events."
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "Framework :: Plone",
+    "Framework :: Plone :: 6.2",
+    "Framework :: Plone :: Core",
+    "Framework :: Zope :: 5",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+]
+license = "BSD-3-Clause"
+dynamic = ["readme"]
+requires-python = ">=3.10"
+authors = [
+    {name = "BlueDynamics Alliance",email = "dev@bluedynamics.com"},
+]
+dependencies = [
+    "AccessControl",
+    "BTrees",
+    "ZODB",
+    "Zope",
+    "plone.event",
+    "zope.interface",
+    "zope.schema",
+]
+keywords = [
+    "zope",
+    "zope2",
+    "index",
+    "catalog",
+    "date",
+    "recurring",
+]
+
+[project.optional-dependencies]
+test = [
+    "Products.ZCatalog",
+    "plone.testing",
+    "pytz",
+]
+
+[project.urls]
+Source = "https://github.com/collective/Products.DateRecurringIndex"
+Issues = "https://github.com/collective/Products.DateRecurringIndex/issues"
+Changelog = "https://github.com/collective/Products.DateRecurringIndex/blob/master/CHANGES.rst"
+
+[tool.setuptools.dynamic]
+readme = {file = ["README.rst", "CONTRIBUTORS.rst", "CHANGES.rst", "LICENSE.rst"]}
+# END-MARKER-MANUAL-CONFIG
 
 [tool.isort]
 profile = "plone"
